@@ -38,7 +38,7 @@ export function Contact() {
     {
       icon: Phone,
       title: "Teléfono",
-      content: ["+505 +505 2298 3170", "+505 8403 8777"],
+      content: ["+505 2298 3170", "+505 8403 8777"],
     },
     {
       icon: Mail,
