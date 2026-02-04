@@ -1,4 +1,7 @@
-# prueba_Iprocess
+# Prueba_Iprocess
 Prueba diseño pagina web iProcess Ind
 
-Colaborador:
+## Autores
+
+- [@ZoharGarcia](https://github.com/ZoharGarcia/)
+- [@Bismar-Ac](https://github.com/bismaracevedo003/)
