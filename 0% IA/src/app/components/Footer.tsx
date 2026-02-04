@@ -133,7 +133,7 @@ export function Footer() {
                     href="tel:+50588889999"
                     className="text-secondary-foreground/80 dark:text-muted-foreground hover:text-primary transition-colors block font-medium"
                   >
-                    +505 8888-9999
+                    +505 8403 8777
                   </a>
                 </div>
               </li>
