@@ -3,11 +3,13 @@ import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { Button } from "@/app/components/ui/button";
 import logo from "@/assets/img/LOGO-IPROCESS-NARANJA-300x53.png";
+import { Link, useLocation } from "react-router-dom";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
+  const location = useLocation(); 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,12 +40,12 @@ export function Header() {
     }
   };
 
-  const navItems = [
-    { id: "inicio", label: "Inicio" },
-    { id: "servicios", label: "Servicios" },
-    { id: "industria", label: "Industria" },
-    { id: "partner", label: "Partner" },
-    { id: "contacto", label: "Contacto" },
+const navItems = [
+    { path: "/", label: "Inicio" },
+    { path: "/servicios", label: "Servicios" },
+    { path: "/industria", label: "Industria" },
+    { path: "/partner", label: "Partner" },
+    { path: "/contacto", label: "Contacto" },
   ];
 
   return (
@@ -57,30 +59,26 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <button
-  onClick={() => scrollToSection("inicio")}
-  className="flex items-center group z-10"
->
+  <Link to="/" className="flex items-center group z-10">
   <img
     src={logo}
     alt="iP"
     className="
       h-8 w-auto
-      transition-transform duration-300
-      group-hover:scale-110
+    
       drop-shadow-md
     "
   />
-</button>
+</Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
+              <Link  
+                key={item.path}
+                to={item.path}
                 className={`relative px-4 py-2 text-sm font-medium transition-colors group ${
-                  activeSection === item.id
+                  location.pathname === item.path
                     ? "text-primary"
                     : "text-foreground hover:text-primary"
                 }`}
@@ -88,23 +86,25 @@ export function Header() {
                 {item.label}
                 <span
                   className={`absolute bottom-0 left-0 right-0 h-0.5 bg-primary transition-all duration-300 ${
-                    activeSection === item.id
+                    activeSection === item.path
                       ? "opacity-100 scale-x-100"
                       : "opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100"
                   }`}
                 />
-              </button>
+              </Link>
             ))}
           </nav>
 
           {/* Right Side - CTA + Theme Toggle */}
           <div className="hidden lg:flex items-center space-x-4">
             <ThemeToggle />
-            <Button
-              onClick={() => scrollToSection("contacto")}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            >
-              Solicita Presupuesto
+            <Button asChild> 
+              <Link
+                to="/contacto"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                Solicita Presupuesto
+              </Link>
             </Button>
           </div>
 
@@ -132,24 +132,28 @@ export function Header() {
         <div className="lg:hidden border-t border-border bg-background/98 backdrop-blur-md shadow-xl">
           <nav className="container mx-auto px-4 py-6 space-y-1">
             {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
+              <Link  
+                key={item.path}
+                to={item.path}
                 className={`block w-full text-left px-4 py-3 text-base font-medium rounded-lg transition-colors ${
-                  activeSection === item.id
+                  location.pathname === item.path
                     ? "bg-primary text-primary-foreground"
                     : "text-foreground hover:bg-muted"
                 }`}
+                onClick={() => setIsMenuOpen(false)} 
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
             <div className="pt-4">
-              <Button
-                onClick={() => scrollToSection("contacto")}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
-              >
-                Solicita Presupuesto
+              <Button asChild>  
+                <Link
+                  to="/contacto"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Solicita Presupuesto
+                </Link>
               </Button>
             </div>
           </nav>

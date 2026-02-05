@@ -46,7 +46,7 @@ const achievements = [
   { value: "98%", label: "Satisfacción del Cliente" },
 ];
 
-export function Partner() {
+export function Partner1() {
   return (
     <section id="partner" className="py-20 sm:py-28 bg-muted dark:bg-background relative overflow-hidden">
       {/* Background decorations */}

@@ -1,38 +1,22 @@
 import { Routes, Route } from "react-router-dom";
+import { ThemeProvider } from 'next-themes';
 
-import { ThemeProvider } from "@/app/components/ThemeProvider";
-import { Header } from "@/app/components/Header";
-import { Hero } from "@/app/components/Hero";
-import { Services } from "@/app/components/Services";
-import { Industry } from "@/app/components/Industry";
-import { Partner } from "@/app/components/Partner";
-import { Contact } from "@/app/components/Contact";
-import { Footer } from "@/app/components/Footer";
+import Inicio from "@/pages/Home";  // O Home si no lo renombraste
 import Servicios from "@/pages/servicios";
+import Industria from "@/pages/Industria";
+import Partner from "@/pages/Partner";
+import Contacto from "@/pages/Contacto";
 
 export default function App() {
   return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Inicio />} />
       <Route path="/servicios" element={<Servicios />} />
+      <Route path="/industria" element={<Industria />} />
+      <Route path="/partner" element={<Partner />} />
+      <Route path="/contacto" element={<Contacto />} />
     </Routes>
-  );
-}
-
-function Home() {
-  return (
-    <ThemeProvider>
-      <div className="min-h-screen bg-background text-foreground">
-        <Header />
-        <main>
-          <Hero />
-          <Services />
-          <Industry />
-          <Partner />
-          <Contact />
-        </main>
-        <Footer />
-      </div>
     </ThemeProvider>
   );
 }
