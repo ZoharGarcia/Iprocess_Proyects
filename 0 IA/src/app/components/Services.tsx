@@ -44,7 +44,7 @@ const services = [
 
 export function Services() {
   return (
-    <section id="servicios" className="py-20 sm:py-28 bg-muted dark:bg-background relative overflow-hidden">
+    <section id="servicios1" className="py-20 sm:py-28 bg-muted dark:bg-background relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
