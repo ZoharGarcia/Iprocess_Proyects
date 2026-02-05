@@ -1,6 +1,6 @@
 import { Users2, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
-import recursoIndustrial from "@/assets/img/recursotanque.jpg";
+import recursoIndustrial from "@/assets/img/Sobre Nosotros.jpeg";
 
 export function WhoWeAre() {
   const highlights = [
