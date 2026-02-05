@@ -26,7 +26,7 @@ export function WhoWeAre() {
         >
           <span className="block">¿Quiénes somos?</span>
           <span className="block bg-gradient-to-r from-primary via-primary to-orange-dark bg-clip-text text-transparent">
-            Ingeniería + Ejecución con visión industrial
+            Proyectos de Ingeniería
           </span>
         </motion.h2>
 
