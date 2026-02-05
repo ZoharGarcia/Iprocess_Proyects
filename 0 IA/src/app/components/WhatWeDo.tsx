@@ -1,6 +1,6 @@
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
-import recursoIndustrial from "@/assets/img/recursotanque.jpg"; // Reemplaza con tu imagen real o usa la URL si prefieres
+import recursoIndustrial from "@/assets/img/recursotanque.jpg"; 
 
 export function WhatWeDo() {
   const services = [
