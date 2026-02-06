@@ -43,6 +43,7 @@ export function Header() {
 const navItems = [
     { path: "/", label: "Inicio" },
     { path: "/servicios", label: "Servicios" },
+    { path: "/Unidades", label: "Unidades de Servicio" },
     { path: "/industria", label: "Industria" },
     { path: "/partner", label: "Partner" },
     { path: "/contacto", label: "Contacto" },
