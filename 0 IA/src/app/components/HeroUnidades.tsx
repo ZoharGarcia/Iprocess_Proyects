@@ -4,3 +4,4 @@ import { motion } from "motion/react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { Link } from "react-router-dom";
 import recursoPartner from "@/assets/img/PortadaUnidades.jpeg"; 
+
