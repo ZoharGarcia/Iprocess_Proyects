@@ -4,6 +4,13 @@ import { Card } from "@/app/components/ui/card";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import recursoPartner from "@/assets/img/recurso-partner.png";
 
+import siemensLogo from "@/assets/img/LogoSiemens.png";
+import rockwellLogo from "@/assets/img/LogoRockwell.png";
+import schneiderLogo from "@/assets/img/LogoSchneider.png";
+import abbLogo from "@/assets/img/LogoABB.png";
+import honeywellLogo from "@/assets/img/LogoHoneywell.png";
+import emersonLogo from "@/assets/img/LogoEmerson.png";
+
 const values = [
   {
     icon: Target,
@@ -40,12 +47,12 @@ const values = [
 ];
 
 const partners = [
-  { name: "Siemens", specialty: "Automatización y Control" },
-  { name: "Rockwell Automation", specialty: "PLC y SCADA" },
-  { name: "Schneider Electric", specialty: "Gestión Energética" },
-  { name: "ABB", specialty: "Robótica Industrial" },
-  { name: "Honeywell", specialty: "Sistemas de Seguridad" },
-  { name: "Emerson", specialty: "Control de Procesos" },
+  { name: "Siemens", specialty: "Automatización y Control", logo: siemensLogo },
+  { name: "Rockwell Automation", specialty: "PLC y SCADA", logo: rockwellLogo },
+  { name: "Schneider Electric", specialty: "Gestión Energética", logo: schneiderLogo },
+  { name: "ABB", specialty: "Robótica Industrial", logo: abbLogo },
+  { name: "Honeywell", specialty: "Sistemas de Seguridad", logo: honeywellLogo },
+  { name: "Emerson", specialty: "Control de Procesos", logo: emersonLogo },
 ];
 
 const achievements = [
@@ -202,49 +209,58 @@ export function Partner1() {
           </div>
         </motion.div>
 
-        {/* Partners */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="text-center mb-12">
-            <div className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
-              <span className="text-sm font-semibold text-primary">Partners Tecnológicos</span>
+{/* Partners */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.6 }}
+>
+  <div className="text-center mb-12">
+    <div className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+      <span className="text-sm font-semibold text-primary">Partners Tecnológicos</span>
+    </div>
+    <h3 className="mb-4">Trabajamos con los Mejores</h3>
+    <p className="text-muted-foreground max-w-2xl mx-auto">
+      Alianzas estratégicas con líderes mundiales en tecnología industrial para garantizar 
+      soluciones de la más alta calidad y con soporte internacional.
+    </p>
+  </div>
+  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+    {partners.map((partner, index) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: index * 0.1 }}
+      >
+        <Card className="p-4 text-center hover:shadow-xl dark:hover:shadow-primary/10 transition-all duration-300 hover:scale-105 cursor-pointer group border-2 hover:border-primary/50 h-full flex flex-col justify-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          <div className="relative z-10">
+            {/* Aquí agregamos la imagen del logo */}
+            <div className="mb-3 flex justify-center">
+              <ImageWithFallback
+                src={partner.logo}
+                alt={`Logo de ${partner.name}`}
+                className="w-16 h-16 object-contain" // Ajusta el tamaño y estilos según necesites
+                fallbackSrc="/fallback-logo.png" // Asume que tienes un fallback genérico
+              />
             </div>
-            <h3 className="mb-4">Trabajamos con los Mejores</h3>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Alianzas estratégicas con líderes mundiales en tecnología industrial para garantizar 
-              soluciones de la más alta calidad y con soporte internacional.
-            </p>
+            <div className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
+              {partner.name}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {partner.specialty}
+            </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-            {partners.map((partner, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <Card className="p-4 text-center hover:shadow-xl dark:hover:shadow-primary/10 transition-all duration-300 hover:scale-105 cursor-pointer group border-2 hover:border-primary/50 h-full flex flex-col justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  <div className="relative z-10">
-                    <div className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
-                      {partner.name}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {partner.specialty}
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-    </section>
+        </Card>
+      </motion.div>
+    ))}
+  </div>
+</motion.div>
+</div>
+</section>
   );
 }
