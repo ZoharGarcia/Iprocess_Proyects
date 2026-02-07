@@ -32,7 +32,7 @@ const businessUnits: BusinessUnit[] = [
     id: "BU_03",
     name: "High Power",
     title: "OT/ET de Potencia Crítica",
-    description: "Es la infraestructura eléctrica pesada. Asegura que el flujo de energía sea constante para que el IT y el OT no se detengan.",
+    description: "Es la base de la infraestructura eléctrica industrial. Esta unidad asegura la continuidad del suministro eléctrico mediante sistemas de distribución de potencia robustos, protección de red y calidad de energía.",
     icon: Server,
     accentColor: "from-red-500/20 to-red-600/5",
   },
