@@ -15,9 +15,8 @@ const businessUnits: BusinessUnit[] = [
   {
     id: "BU_01",
     name: "Smart Power [Predictivo]",
-    title: "OT/ET [Tecnología Operación]",
-    description:
-      "Es el poder físico controlado. Se enfoca en que las máquinas (VDF, Motores) trabajen de forma inteligente.",
+    title: "OT / ET – Tecnología de Operación",
+    description: "Es el poder físico controlado de forma inteligente. Esta unidad se enfoca en la optimización de activos motrices y sistemas de potencia mediante control avanzado, monitoreo predictivo y eficiencia energética.",
     icon: Zap,
     accentColor: "from-blue-500/20 to-blue-600/5",
   },
@@ -25,8 +24,7 @@ const businessUnits: BusinessUnit[] = [
     id: "BU_02",
     name: "Digital Flow",
     title: "Convergencia OT/IT/ET",
-    description:
-      "Es el corazón de tu estrategia. Aquí los datos del campo (OT) se convierten en información para la gerencia (IT) mediante SCADA y DCS, protegidos bajo protocolos de ciberseguridad.",
+    description: "Es el corazón de la estrategia de iProcess. Aquí, los datos del campo (OT) se transforman en información estratégica para la gerencia (IT) mediante plataformas SCADA, DCS, IIoT y analítica avanzada, bajo estrictos protocolos de ciberseguridad industrial.",
     icon: Cpu,
     accentColor: "from-purple-500/20 to-purple-600/5",
   },
@@ -34,28 +32,9 @@ const businessUnits: BusinessUnit[] = [
     id: "BU_03",
     name: "High Power",
     title: "OT/ET de Potencia Crítica",
-    description:
-      "Es la infraestructura eléctrica pesada. Asegura que el flujo de energía sea constante para que el IT y el OT no se detengan.",
+    description: "Es la base de la infraestructura eléctrica industrial. Esta unidad asegura la continuidad del suministro eléctrico mediante sistemas de distribución de potencia robustos, protección de red y calidad de energía.",
     icon: Server,
     accentColor: "from-red-500/20 to-red-600/5",
-  },
-  {
-    id: "BU_04",
-    name: "Safety & Asset Protection",
-    title: "Seguridad & Protección de Activos OT/IT",
-    description:
-      "Protege físicamente tanto el hardware de campo (OT) como los centros de datos y redes (IT) contra eventos externos, garantizando la integridad de los sistemas de comunicación.",
-    icon: Shield,
-    accentColor: "from-green-500/20 to-green-600/5",
-  },
-  {
-    id: "BU_05",
-    name: "Industrial Supplies & Materials",
-    title: "Suministro Transaccional OT/IT",
-    description:
-      "Es el soporte de materiales para mantener ambas capas (IT/OT) operativas sin retrasos.",
-    icon: Package,
-    accentColor: "from-amber-500/20 to-amber-600/5",
   },
 ];
 
