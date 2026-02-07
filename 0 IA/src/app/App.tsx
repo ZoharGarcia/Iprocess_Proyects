@@ -1,6 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
-
+import { useEffect } from 'react';
+import ReactGA from 'react-ga';
 import Inicio from "@/pages/Home";
 import Servicios from "@/pages/servicios";
 import Unidades from "@/pages/Unidades";
@@ -14,6 +15,12 @@ function EshopRedirect() {
 }
 
 export default function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    ReactGA.initialize('G-J8GD11MG9X'); 
+    ReactGA.pageview(location.pathname + location.search);
+  }, [location]);
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Routes>
