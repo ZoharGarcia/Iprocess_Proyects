@@ -36,24 +36,6 @@ const businessUnits: BusinessUnit[] = [
     icon: Server,
     accentColor: "from-red-500/20 to-red-600/5",
   },
-  {
-    id: "BU_04",
-    name: "Safety & Asset Protection",
-    title: "Seguridad & Protección de Activos OT/IT",
-    description:
-      "Protege físicamente tanto el hardware de campo (OT) como los centros de datos y redes (IT) contra eventos externos, garantizando la integridad de los sistemas de comunicación.",
-    icon: Shield,
-    accentColor: "from-green-500/20 to-green-600/5",
-  },
-  {
-    id: "BU_05",
-    name: "Industrial Supplies & Materials",
-    title: "Suministro Transaccional OT/IT",
-    description:
-      "Es el soporte de materiales para mantener ambas capas (IT/OT) operativas sin retrasos.",
-    icon: Package,
-    accentColor: "from-amber-500/20 to-amber-600/5",
-  },
 ];
 
 export function Verticales() {
