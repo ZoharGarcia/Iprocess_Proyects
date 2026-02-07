@@ -1,7 +1,17 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Slider from "react-slick";
-import { Factory, Droplets, ShoppingCart, Leaf, Battery, Building2, TrendingUp } from "lucide-react";
-import { Card } from "@/app/components/ui/card";
+import { 
+  Factory, 
+  Droplets, 
+  ShoppingCart, 
+  Leaf, 
+  Battery, 
+  Building2, 
+  TrendingUp,     
+  Pickaxe,        
+  Anchor,         
+  Hospital        
+} from "lucide-react";import { Card } from "@/app/components/ui/card";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 
 const industries = [
@@ -34,6 +44,21 @@ const industries = [
     icon: Building2,
     name: "Construcción",
     description: "Sistemas de gestión y control para edificios inteligentes",
+  },
+  {
+    icon: Pickaxe,
+    name: "Minería",
+    description: "Automatización y monitoreo de procesos extractivos y plantas de procesamiento",
+  },
+  {
+    icon: Anchor,
+    name: "Puertos y Logística Portuaria",
+    description: "Sistemas de control para grúas, terminales, muelles y operaciones portuarias",
+  },
+  {
+    icon: Hospital,
+    name: "Hospitales y Salud",
+    description: "Automatización de sistemas críticos, HVAC, energía y monitoreo hospitalario",
   },
 ];
 
