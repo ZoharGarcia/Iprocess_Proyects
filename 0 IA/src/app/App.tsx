@@ -9,7 +9,6 @@ const Unidades = lazy(() => import("@/pages/Unidades"));
 const Industria = lazy(() => import("@/pages/Industria"));
 const Partner = lazy(() => import("@/pages/Partner"));
 const Contacto = lazy(() => import("@/pages/Contacto"));
-const AdminPanel = lazy(() => import("@/pages/AdminPanel"));
 //const NotFound = lazy(() => import("@/pages/NotFound")); // Assuming you have or will create this
 
 function EshopRedirect() {
@@ -45,7 +44,6 @@ export default function App() {
           <Route path="/partner" element={<Partner />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/e-shop" element={<EshopRedirect />} />
-          <Route path="/admin-panel" element={<AdminPanel />} />
         </Routes>
     </ThemeProvider>
   );
