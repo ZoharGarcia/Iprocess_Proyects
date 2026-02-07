@@ -1,25 +1,23 @@
 import { Layout } from "@/app/components/Layout";
-import { Hero } from "@/app/components/Hero";
+import { Services } from "@/app/components/Services";
+import { HeroUnidades } from "@/app/components/HeroUnidades";
 import { Helmet } from "react-helmet-async";
-import { WhatWeDo } from "@/app/components/WhatWeDo";
-import { WhoWeAre } from "@/app/components/WhoWeare";
 
-export default function Inicio() {
+export default function Servicios() {
   return (
     <>
-      <Helmet>
-        <title>Inicio - iProcess Ind</title>
-        <meta
-          name="description"
-          content="Soluciones de automatización industrial, ingeniería y tecnología para la industria moderna."
-        />
-      </Helmet>
+          <Helmet>
+  <title>Unidades - iProcess Ind</title>
+  <meta
+    name="description"
+    content="Servicios de automatización industrial, IoT, monitoreo de procesos, desarrollo de software y consultoría técnica para empresas industriales."
+  />
+</Helmet>
 
-      <Layout>
-        <Hero />
-        <WhoWeAre />
-        <WhatWeDo />
-      </Layout>
+    <Layout>
+      <HeroServicios />
+      <Services />
+    </Layout>
     </>
   );
 }
