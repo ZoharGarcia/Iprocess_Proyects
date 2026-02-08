@@ -4,18 +4,18 @@ import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { Button } from "@/app/components/ui/button";
 import logo from "@/assets/img/LOGO-IPROCESS-NARANJA-300x53.png";
 import { Link, useLocation } from "react-router-dom";
+import ReactGA from "react-ga4";  
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
-  const location = useLocation(); 
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      
-      // Update active section based on scroll position
+   
       const sections = ["inicio", "servicios", "industria", "partner", "contacto"];
       const currentSection = sections.find(section => {
         const element = document.getElementById(section);
@@ -40,7 +40,7 @@ export function Header() {
     }
   };
 
-const navItems = [
+  const navItems = [
     { path: "/", label: "Inicio" },
     { path: "/servicios", label: "Servicios" },
     { path: "/Unidades", label: "Unidades de Servicio" },
@@ -49,6 +49,14 @@ const navItems = [
     { path: "/contacto", label: "Contacto" },
     { path: "/e-shop", label: "E-Shop" },
   ];
+
+  const trackMenuClick = (label: string, isCTA: boolean = false) => {
+    ReactGA.event({
+      category: "Navegación",
+      action: isCTA ? "Clic CTA" : "Clic Menú",
+      label: label,
+    });
+  };
 
   return (
     <header
@@ -60,18 +68,18 @@ const navItems = [
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-  <Link to="/" className="flex items-center group z-10">
-  <img
-    src={logo}
-    alt="iP"
-    className="
-      h-8 w-auto
-    
-      drop-shadow-md
-    "
-  />
-</Link>
+          {/* Logo - puedes trackear clic en logo si quieres */}
+          <Link 
+            to="/" 
+            className="flex items-center group z-10"
+            onClick={() => trackMenuClick("Logo", false)}
+          >
+            <img
+              src={logo}
+              alt="iProcess Ind"
+              className="h-8 w-auto drop-shadow-md"
+            />
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
@@ -84,6 +92,7 @@ const navItems = [
                     ? "text-primary"
                     : "text-foreground hover:text-primary"
                 }`}
+                onClick={() => trackMenuClick(item.label, item.label === "Solicita Presupuesto")}
               >
                 {item.label}
                 <span
@@ -104,6 +113,7 @@ const navItems = [
               <Link
                 to="/contacto"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                onClick={() => trackMenuClick("Solicita Presupuesto", true)}
               >
                 Solicita Presupuesto
               </Link>
@@ -142,7 +152,10 @@ const navItems = [
                     ? "bg-primary text-primary-foreground"
                     : "text-foreground hover:bg-muted"
                 }`}
-                onClick={() => setIsMenuOpen(false)} 
+                onClick={() => {
+                  trackMenuClick(item.label, item.label === "Solicita Presupuesto");
+                  setIsMenuOpen(false);
+                }}
               >
                 {item.label}
               </Link>
@@ -152,7 +165,10 @@ const navItems = [
                 <Link
                   to="/contacto"
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => {
+                    trackMenuClick("Solicita Presupuesto", true);
+                    setIsMenuOpen(false);
+                  }}
                 >
                   Solicita Presupuesto
                 </Link>
