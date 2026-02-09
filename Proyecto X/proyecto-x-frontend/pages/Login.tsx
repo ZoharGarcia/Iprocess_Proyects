@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Style from "../styles/Login.css";
 
 type FormState = {
   email: string;

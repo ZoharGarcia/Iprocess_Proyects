@@ -1,0 +1,130 @@
+/* =========================
+   LOGIN LAYOUT
+   ========================= */
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background-color: #ffffff;
+}
+
+/* =========================
+   CARD
+   ========================= */
+
+.login__card {
+  width: 100%;
+  max-width: 420px;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+}
+
+/* =========================
+   TITLES
+   ========================= */
+
+.login__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.login__subtitle {
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px;
+}
+
+/* =========================
+   ALERT
+   ========================= */
+
+.login__alert {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgba(220, 38, 38, 0.08);
+  color: rgb(220, 38, 38);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  font-size: 0.9rem;
+}
+
+/* =========================
+   FORM FIELDS
+   ========================= */
+
+.login__field {
+  margin-bottom: 16px;
+}
+
+.login__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.login__input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.login__input:focus {
+  border-color: #000000;
+}
+
+/* =========================
+   FIELD ERRORS
+   ========================= */
+
+.login__error {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: rgb(220, 38, 38);
+}
+
+/* =========================
+   REMEMBER
+   ========================= */
+
+.login__remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.7);
+  margin-bottom: 20px;
+}
+
+.login__remember input {
+  cursor: pointer;
+}
+
+/* =========================
+   SUBMIT
+   ========================= */
+
+.login__submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.login__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
