@@ -71,8 +71,12 @@ export default function Login() {
 
       saveToken(data.token);
       navigate("/dashboard", { replace: true });
-    } catch (err: null) {
-      setError(err?.message ?? "Error desconocido.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message ?? "Error desconocido.");
+      } else {
+        setError("Error desconocido.");
+      }
     } finally {
       setLoading(false);
     }
