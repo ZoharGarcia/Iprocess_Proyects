@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type LoginResponse = {
+  token: string;
   user?: { id: number; name: string; email: string };
 };
 
