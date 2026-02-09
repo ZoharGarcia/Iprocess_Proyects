@@ -15,8 +15,9 @@ function Dashboard() {
 }
 
 function isAuthenticated(): boolean {
-  return Boolean(localStorage.getItem("auth_token"));
+  return Boolean(localStorage.getItem("auth_token") || sessionStorage.getItem("auth_token"));
 }
+
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   if (!isAuthenticated()) return <Navigate to="/login" replace />;

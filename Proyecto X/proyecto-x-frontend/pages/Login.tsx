@@ -1,156 +1,186 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-type LoginResponse = {
-  token: string;
-  user?: { id: number; name: string; email: string };
+type FormState = {
+  email: string;
+  password: string;
+  remember: boolean;
 };
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
+type ApiLoginResponse =
+  | { token: string }
+  | { access_token: string }
+  | { data?: { token?: string } }
+  | Record<string, unknown>;
 
-function saveToken(token: string) {
-  localStorage.setItem("auth_token", token);
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function getApiBaseUrl() {
+  // Producción: si no hay .env, usa same-origin (deploy/proxy).
+  const v = (import.meta as any)?.env?.VITE_API_BASE_URL;
+  return typeof v === "string" ? v.replace(/\/$/, "") : "";
+}
+
+function extractToken(payload: ApiLoginResponse): string | null {
+  if (typeof (payload as any)?.token === "string") return (payload as any).token;
+  if (typeof (payload as any)?.access_token === "string") return (payload as any).access_token;
+  if (typeof (payload as any)?.data?.token === "string") return (payload as any).data.token;
+  return null;
 }
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // Opcional: si quieres agregar "recordarme"
-  const [remember, setRemember] = useState(false);
+  const [form, setForm] = useState<FormState>({
+    email: "",
+    password: "",
+    remember: true,
+  });
 
+  const [touched, setTouched] = useState({ email: false, password: false });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [uiError, setUiError] = useState<string | null>(null);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const errors = useMemo(() => {
+    const next: Partial<Record<keyof FormState, string>> = {};
+    const email = form.email.trim();
 
-  const canSubmit =
-    email.trim().length > 0 &&
-    emailRegex.test(email.trim()) &&
-    password.length >= 6 &&
-    !loading;
+    if (!email) next.email = "Ingresa tu correo.";
+    else if (!emailRegex.test(email)) next.email = "Ingresa un correo válido.";
 
-  async function handleSubmit(e: React.FormEvent) {
+    if (!form.password) next.password = "Ingresa tu contraseña.";
+    else if (form.password.length < 6) next.password = "La contraseña debe tener al menos 6 caracteres.";
+
+    return next;
+  }, [form.email, form.password]);
+
+  const canSubmit = !loading && !errors.email && !errors.password;
+
+  function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
+    setTouched({ email: true, password: true });
+    setUiError(null);
 
     if (!canSubmit) return;
 
     setLoading(true);
-
     try {
-      if (!API_BASE_URL) {
-        throw new Error("Falta VITE_API_BASE_URL en tu .env");
-      }
+      const base = getApiBaseUrl();
 
-      const res = await fetch(`${API_BASE_URL}/login`, {  // ← Corrección clave: /api/login
+      const res = await fetch(`${base}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         body: JSON.stringify({
-          email,
-          password,
-          remember, // ← opcional, si tu backend lo soporta
+          email: form.email.trim(),
+          password: form.password,
         }),
       });
 
+      let data: ApiLoginResponse = {};
+      try {
+        data = (await res.json()) as ApiLoginResponse;
+      } catch {
+        data = {};
+      }
+
       if (!res.ok) {
-        let msg = "Credenciales inválidas o error en el servidor.";
-        try {
-          const data = await res.json();
-          if (data?.message) msg = data.message;
-          if (data?.errors) {
-            const firstError = Object.values(data.errors)[0] as string[];
-            if (firstError?.[0]) msg = firstError[0];
-          }
-        } catch {
-          // Si no se puede parsear JSON
+        if (res.status === 401) {
+          setUiError("Correo o contraseña incorrectos.");
+          return;
         }
-        throw new Error(msg);
+        if (res.status === 422) {
+          setUiError("Revisa los datos e inténtalo de nuevo.");
+          return;
+        }
+        setUiError("No se pudo iniciar sesión. Inténtalo más tarde.");
+        return;
       }
 
-      const data = (await res.json()) as LoginResponse;
-
-      if (!data?.token) {
-        throw new Error("Respuesta inválida del servidor: no se recibió token.");
+      const token = extractToken(data);
+      if (!token) {
+        setUiError("No se pudo iniciar sesión. Inténtalo más tarde.");
+        return;
       }
 
-      saveToken(data.token);
+      if (form.remember) localStorage.setItem("auth_token", token);
+      else sessionStorage.setItem("auth_token", token);
+
       navigate("/dashboard", { replace: true });
-    } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "Ocurrió un error desconocido."
-      );
+    } catch {
+      setUiError("No se pudo iniciar sesión. Inténtalo más tarde.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="auth-shell">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1>Proyecto X</h1>
-          <p>Inicia sesión para continuar</p>
-        </div>
+    <div className="login">
+      <form className="login__card" onSubmit={onSubmit} noValidate>
+        <h1 className="login__title">Iniciar sesión</h1>
+        <p className="login__subtitle">Ingresa tus credenciales para continuar.</p>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <label className="auth-label">
+        {uiError && (
+          <div className="login__alert" role="alert">
+            {uiError}
+          </div>
+        )}
+
+        <div className="login__field">
+          <label className="login__label" htmlFor="email">
             Correo
-            <input
-              className="auth-input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value.trim())}
-              placeholder="tu@correo.com"
-              autoComplete="email"
-              required
-            />
           </label>
-
-          <label className="auth-label">
-            Contraseña
-            <input
-              className="auth-input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              required
-            />
-          </label>
-
-          {/* Opcional: checkbox recordarme */}
-          <label className="auth-checkbox">
-            <input
-              type="checkbox"
-              checked={remember}
-              onChange={(e) => setRemember(e.target.checked)}
-            />
-            Recordarme
-          </label>
-
-          {error && <div className="auth-error">{error}</div>}
-
-          <button
-            className="auth-button"
-            type="submit"
-            disabled={!canSubmit || loading}
-          >
-            {loading ? "Ingresando..." : "Ingresar"}
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          <small>
-            API: {API_BASE_URL || "No configurada (revisa .env)"}
-          </small>
+          <input
+            id="email"
+            className="login__input"
+            type="email"
+            value={form.email}
+            onChange={(e) => setField("email", e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+            autoComplete="email"
+            placeholder="correo@empresa.com"
+          />
+          {touched.email && errors.email && <div className="login__error">{errors.email}</div>}
         </div>
-      </div>
+
+        <div className="login__field">
+          <label className="login__label" htmlFor="password">
+            Contraseña
+          </label>
+          <input
+            id="password"
+            className="login__input"
+            type="password"
+            value={form.password}
+            onChange={(e) => setField("password", e.target.value)}
+            onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+            autoComplete="current-password"
+            placeholder="••••••••"
+          />
+          {touched.password && errors.password && (
+            <div className="login__error">{errors.password}</div>
+          )}
+        </div>
+
+        <label className="login__remember">
+          <input
+            type="checkbox"
+            checked={form.remember}
+            onChange={(e) => setField("remember", e.target.checked)}
+          />
+          <span>Recordarme</span>
+        </label>
+
+        <button className="login__submit" type="submit" disabled={!canSubmit}>
+          {loading ? "Ingresando..." : "Entrar"}
+        </button>
+      </form>
     </div>
   );
 }
