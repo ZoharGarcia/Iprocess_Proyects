@@ -24,47 +24,39 @@ Incluye pruebas de UI modernas y el proyecto principal **Proyecto X** con arquit
 
 ---
 
-# 📂 Estructura del Repositorio
+## 📂 Estructura del Repositorio
 
-Iprocess_Proyects/
+Iprocess_Proyects
 │
-├── 0 IA/                          # Prototipo inicial UI (Vite + React + TS)
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.ts
+├── 0 IA
+│ ├── src
+│ ├── public
+│ ├── package.json
+│ └── vite.config.ts
 │
-├── 10 IA/                         # Iteración avanzada del prototipo
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.ts
+├── 10 IA
+│ ├── src
+│ ├── public
+│ ├── package.json
+│ └── vite.config.ts
 │
-├── Proyecto X/                    # Proyecto principal full-stack
-│   │
-│   ├── proyecto-x-backend/        # Backend Laravel (API REST)
-│   │   ├── app/
-│   │   ├── routes/
-│   │   ├── database/
-│   │   ├── config/
-│   │   ├── .env.example
-│   │   ├── composer.json
-│   │   └── artisan
-│   │
-│   └── proyecto-x-frontend/       # Frontend SPA (React + Vite)
-│       ├── src/
-│       │   ├── app/
-│       │   │   └── components/
-│       │   ├── pages/
-│       │   ├── services/
-│       │   └── styles/
-│       │
-│       ├── public/
-│       ├── package.json
-│       └── vite.config.ts
+├── Proyecto X
+│ ├── proyecto-x-backend
+│ │ ├── app
+│ │ ├── routes
+│ │ ├── database
+│ │ └── composer.json
+│ │
+│ └── proyecto-x-frontend
+│ ├── src
+│ │ ├── components
+│ │ ├── pages
+│ │ ├── services
+│ │ └── styles
+│ ├── public
+│ └── package.json
 │
-├── Imagenes/                      # Recursos gráficos del repo (logos, etc.)
-│
+├── Imagenes
 └── README.md
 
 ---
