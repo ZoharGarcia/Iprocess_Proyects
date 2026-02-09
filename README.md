@@ -1,6 +1,14 @@
 # Iprocess_Proyects
 Repositorio de proyectos y pruebas para iProcess. Incluye prototipos de UI con Vite/React y el proyecto "Proyecto X" con backend en Laravel y frontend en Vite/React.
 
+![Logo iProcess](0%20IA/src/assets/img/LOGO-IPROCESS-NARANJA-300x53.png)
+
+## Vista rapida
+
+![Hero Servicios](0%20IA/src/assets/img/recurso-servicios.png)
+![Hero Industria](0%20IA/src/assets/img/recurso-industria.png)
+![Hero Contacto](0%20IA/src/assets/img/recurso-contacto.jpg)
+
 ## Contenido
 
 - `0 IA/` y `10 IA/`: prototipos de sitio web (Vite + React + TypeScript + Tailwind).
