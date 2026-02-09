@@ -1,5 +1,8 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "../pages/login";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import Login from "../pages/Login.tsx";
+import Home from "../components/Home.tsx";
+import Header from "../components/Header.tsx";
+import Footer from "../components/Footer.tsx";
 import "../styles/App.css";
 
 function Dashboard() {
@@ -20,23 +23,50 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
   return children;
 }
 
+function AppLayout() {
+  return (
+    <div className="app-layout">
+      <Header />
+      <main className="app-content">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-
-      <Route path="/login" element={<Login />} />
-
+      {/* Raíz: si hay token -> dashboard, si no -> login */}
       <Route
-        path="/dashboard"
+        path="/"
         element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
+          isAuthenticated() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
         }
       />
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      {/* Público */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Privado con layout */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/home" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
