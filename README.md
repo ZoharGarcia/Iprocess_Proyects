@@ -47,8 +47,6 @@ Arquitectura desacoplada basada en:
 ---
 
 # 🚀 Instalación y Uso
-
-
 ## 🖥 Prototipos 
 
 
@@ -68,10 +66,10 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate
 php artisan serve
-
+```
 ---
 
-#Estructura Frontend
+### Estructura Frontend
 
 src/
 │
@@ -79,3 +77,4 @@ src/
 ├── pages/            → Vistas principales
 ├── styles/           → Configuración de tema y estilos
 └── services/         → Comunicación con API
+---
