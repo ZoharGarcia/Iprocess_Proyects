@@ -1,9 +1,9 @@
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import Login from "../pages/Login.tsx";
-import Home from "../components/Home.tsx";
-import Header from "../components/Header.tsx";
-import Footer from "../components/Footer.tsx";
+import Login from "../pages/Login";
+import type { ReactNode } from "react";
+
 import "../styles/App.css";
+
 
 function Dashboard() {
   return (
@@ -19,19 +19,20 @@ function isAuthenticated(): boolean {
 }
 
 
-function ProtectedRoute({ children }: { children: JSX.Element }) {
+function ProtectedRoute({ children }: { children: ReactNode }) {
   if (!isAuthenticated()) return <Navigate to="/login" replace />;
-  return children;
+  return <>{children}</>;
 }
+
 
 function AppLayout() {
   return (
     <div className="app-layout">
-      <Header />
+
       <main className="app-content">
         <Outlet />
       </main>
-      <Footer />
+
     </div>
   );
 }
@@ -62,7 +63,7 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route path="/home" element={<Home />} />
+        
         <Route path="/dashboard" element={<Dashboard />} />
       </Route>
 
