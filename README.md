@@ -28,12 +28,44 @@ Incluye pruebas de UI modernas y el proyecto principal **Proyecto X** con arquit
 
 Iprocess_Proyects/
 │
-├── 0 IA/ → Prototipo UI (Vite + React + TypeScript)
-├── 10 IA/ → Iteración avanzada del prototipo
+├── 0 IA/                          # Prototipo inicial UI (Vite + React + TS)
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.ts
 │
-└── Proyecto X/
-├── proyecto-x-backend/ → API REST (Laravel)
-└── proyecto-x-frontend/ → SPA (Vite + React)
+├── 10 IA/                         # Iteración avanzada del prototipo
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── Proyecto X/                    # Proyecto principal full-stack
+│   │
+│   ├── proyecto-x-backend/        # Backend Laravel (API REST)
+│   │   ├── app/
+│   │   ├── routes/
+│   │   ├── database/
+│   │   ├── config/
+│   │   ├── .env.example
+│   │   ├── composer.json
+│   │   └── artisan
+│   │
+│   └── proyecto-x-frontend/       # Frontend SPA (React + Vite)
+│       ├── src/
+│       │   ├── app/
+│       │   │   └── components/
+│       │   ├── pages/
+│       │   ├── services/
+│       │   └── styles/
+│       │
+│       ├── public/
+│       ├── package.json
+│       └── vite.config.ts
+│
+├── Imagenes/                      # Recursos gráficos del repo (logos, etc.)
+│
+└── README.md
 
 ---
 
