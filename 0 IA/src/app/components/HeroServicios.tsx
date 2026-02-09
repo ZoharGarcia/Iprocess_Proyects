@@ -3,9 +3,11 @@ import { Button } from "@/app/components/ui/button";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { Link } from "react-router-dom";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/app/components/ui/tabs";
+import { HeroUnidades } from "@/app/components/HeroUnidades";
 import recursoServicios from "@/assets/img/recurso-servicios.png"; // ← Cambia por tu imagen específica de servicios (o usa la misma si no tienes una nueva)
 
-export function HeroServicios() {
+function HeroServiciosContent() {
   const features = [
     "Programación PLC y SCADA",
     "Integración de Sistemas Industriales",
@@ -51,9 +53,7 @@ export function HeroServicios() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mb-6 text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight"
           >
-            <span className="block text-foreground">
-              Nuestros Servicios de
-            </span>
+            <span className="block text-foreground">Nuestros Servicios de</span>
             <span className="block bg-gradient-to-r from-primary via-primary to-orange-dark bg-clip-text text-transparent">
               Automatización Industrial
             </span>
@@ -169,5 +169,29 @@ export function HeroServicios() {
       <div className="absolute top-1/4 right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none" />
       <div className="absolute bottom-1/4 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-30 pointer-events-none" />
     </section>
+  );
+}
+
+export function HeroServicios() {
+  return (
+    <Tabs defaultValue="servicios" className="w-full">
+      <div className="w-full flex justify-center pt-24 pb-2">
+        <TabsList className="bg-background/80 backdrop-blur-md border border-border shadow-lg">
+          <TabsTrigger value="servicios" className="px-4">
+            Servicios
+          </TabsTrigger>
+          <TabsTrigger value="unidades" className="px-4">
+            Unidades de Servicio
+          </TabsTrigger>
+        </TabsList>
+      </div>
+
+      <TabsContent value="servicios" className="mt-0">
+        <HeroServiciosContent />
+      </TabsContent>
+      <TabsContent value="unidades" className="mt-0">
+        <HeroUnidades />
+      </TabsContent>
+    </Tabs>
   );
 }
