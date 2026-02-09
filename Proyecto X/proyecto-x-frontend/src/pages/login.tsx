@@ -131,7 +131,7 @@ function Login() {
       // const me = await meRes.json()
 
       // 4) Redirigir (si usas router)
-    navigate("/dashboard")
+      navigate("/dashboard")
     } catch (err) {
       setServerError(err instanceof Error ? err.message : "Error desconocido")
     } finally {
@@ -149,8 +149,73 @@ function Login() {
         <p>
           Centraliza procesos, operaciones y reportes. Este login define el punto de entrada
           para equipos de operaciones, logística y administración.
-		</p>
-	  </section>
-	  <section className="login__panel login__panel--form">
-	
+        </p>
+      </section>
 
+      <section className="login__panel login__panel--form">
+        <form className="login__form" onSubmit={handleSubmit} noValidate>
+          <label className="login__field">
+            <span>Correo</span>
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              value={form.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby="login-email-error"
+            />
+            {(touched.email || submitted) && errors.email && (
+              <span id="login-email-error" className="login__error">
+                {errors.email}
+              </span>
+            )}
+          </label>
+
+          <label className="login__field">
+            <span>Clave</span>
+            <input
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              value={form.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              aria-invalid={Boolean(errors.password)}
+              aria-describedby="login-password-error"
+            />
+            {(touched.password || submitted) && errors.password && (
+              <span id="login-password-error" className="login__error">
+                {errors.password}
+              </span>
+            )}
+          </label>
+
+          <label className="login__checkbox">
+            <input
+              type="checkbox"
+              name="remember"
+              checked={form.remember}
+              onChange={handleChange}
+            />
+            <span>Recordarme</span>
+          </label>
+
+          {serverError && (
+            <div className="login__server-error" role="alert">
+              {serverError}
+            </div>
+          )}
+
+          <button className="login__submit" type="submit" disabled={loading || hasErrors}>
+            {loading ? "Ingresando..." : "Ingresar"}
+          </button>
+        </form>
+      </section>
+    </div>
+  )
+
+
+export default Login 
+}
