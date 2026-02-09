@@ -1,221 +1,126 @@
-import React, { useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom" // si vas a redirigir
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-type FormState = {
-  email: string
-  password: string
-  remember: boolean
+type LoginResponse = {
+  user?: { id: number; name: string; email: string };
+};
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
+
+function saveToken(token: string) {
+  localStorage.setItem("auth_token", token);
 }
 
-type TouchedState = {
-  email: boolean
-  password: boolean
-}
+export default function Login() {
+  const navigate = useNavigate();
 
-type LaravelErrorResponse = {
-  message?: string
-  errors?: Record<string, string[]>
-}
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const API_URL = import.meta.env.VITE_API_URL as string
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-function Login() {
-  const navigate = useNavigate()
+  const canSubmit = email.trim().length > 0 && password.length >= 6 && !loading;
 
-  const [form, setForm] = useState<FormState>({
-    email: "",
-    password: "",
-    remember: true,
-  })
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
 
-  const [touched, setTouched] = useState<TouchedState>({
-    email: false,
-    password: false,
-  })
+    if (!canSubmit) return;
 
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
-
-  const errors = useMemo(() => {
-    const nextErrors: Partial<Record<"email" | "password", string>> = {}
-
-    const email = form.email.trim()
-
-    if (!email) nextErrors.email = "Ingresa tu correo."
-    else if (!emailRegex.test(email)) nextErrors.email = "Correo no válido."
-
-    if (!form.password) nextErrors.password = "Ingresa tu clave."
-    else if (form.password.length < 6) nextErrors.password = "Mínimo 6 caracteres."
-
-    return nextErrors
-  }, [form.email, form.password])
-
-  const hasErrors = Object.keys(errors).length > 0
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = event.target
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }))
-  }
-
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    const { name } = event.target
-    setTouched((prev) => ({
-      ...prev,
-      [name]: true,
-    }))
-  }
-
-  const readLaravelError = async (response: Response) => {
-    
+    setLoading(true);
     try {
-      const data = (await response.json()) as LaravelErrorResponse
-      if (data?.errors) {
-        // Agarra el primer error disponible
-        const firstKey = Object.keys(data.errors)[0]
-        const firstMsg = data.errors[firstKey]?.[0]
-        if (firstMsg) return firstMsg
-      }
-      if (data?.message) return data.message
-    } catch {
-      // si no es JSON, cae aquí
-    }
-    return "No se pudo iniciar sesión."
-  }
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setSubmitted(true)
-    setServerError(null)
-
-    if (hasErrors) {
-      setTouched({ email: true, password: true })
-      return
-    }
-
-    setLoading(true)
-    try {
-      
-      const csrfRes = await fetch(`${API_URL}/sanctum/csrf-cookie`, {
-        method: "GET",
-        credentials: "include",
-      })
-      if (!csrfRes.ok) {
-        throw new Error("No se pudo obtener CSRF. Revisa CORS/Sanctum.")
+      if (!API_BASE_URL) {
+        throw new Error("Falta VITE_API_BASE_URL en tu .env");
       }
 
-      // Login (Laravel /login)
-      const loginRes = await fetch(`${API_URL}/login`, {
+      const res = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
-        credentials: "include", // para sesión/cookies
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email.trim(),
-          password: form.password,
-          remember: form.remember,
-        }),
-      })
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (!loginRes.ok) {
-        const msg = await readLaravelError(loginRes)
-        throw new Error(msg)
+      // Si Laravel devuelve errores tipo 422/401
+      if (!res.ok) {
+        let msg = "Credenciales inválidas.";
+        try {
+          const data = await res.json();
+          // Ajusta esto según tu backend:
+          // - Sanctum / custom: { message: "..."}
+          // - Validation: { errors: { email: ["..."] } }
+          if (data?.message) msg = data.message;
+          if (data?.errors) {
+            const firstKey = Object.keys(data.errors)[0];
+            if (firstKey && data.errors[firstKey]?.[0]) msg = data.errors[firstKey][0];
+          }
+        } catch {
+          // ignore parse error
+        }
+        throw new Error(msg);
       }
 
-      // 3) Opcional: pedir usuario autenticado
-      // (depende si tu backend expone /api/user)
-      // const meRes = await fetch(`${API_URL}/api/user`, { credentials: "include" })
-      // const me = await meRes.json()
+      const data = (await res.json()) as LoginResponse;
 
-      // 4) Redirigir (si usas router)
-      navigate("/dashboard")
-    } catch (err) {
-      setServerError(err instanceof Error ? err.message : "Error desconocido")
+      if (!data?.token) {
+        throw new Error("La respuesta del backend no trae token.");
+      }
+
+      saveToken(data.token);
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      setError(err?.message ?? "Error desconocido.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <div className="login">
-      <div className="login__glow" aria-hidden="true" />
+    <div className="auth-shell">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h1>Proyecto X</h1>
+          <p>Inicia sesión para continuar</p>
+        </div>
 
-      <section className="login__panel login__panel--info">
-        <div className="login__brand">Proyecto X</div>
-        <h1>Accede a tu espacio operativo</h1>
-        <p>
-          Centraliza procesos, operaciones y reportes. Este login define el punto de entrada
-          para equipos de operaciones, logística y administración.
-        </p>
-      </section>
-
-      <section className="login__panel login__panel--form">
-        <form className="login__form" onSubmit={handleSubmit} noValidate>
-          <label className="login__field">
-            <span>Correo</span>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label className="auth-label">
+            Correo
             <input
+              className="auth-input"
               type="email"
-              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="tu@correo.com"
               autoComplete="email"
-              value={form.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby="login-email-error"
             />
-            {(touched.email || submitted) && errors.email && (
-              <span id="login-email-error" className="login__error">
-                {errors.email}
-              </span>
-            )}
           </label>
 
-          <label className="login__field">
-            <span>Clave</span>
+          <label className="auth-label">
+            Contraseña
             <input
+              className="auth-input"
               type="password"
-              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               autoComplete="current-password"
-              value={form.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              aria-invalid={Boolean(errors.password)}
-              aria-describedby="login-password-error"
             />
-            {(touched.password || submitted) && errors.password && (
-              <span id="login-password-error" className="login__error">
-                {errors.password}
-              </span>
-            )}
           </label>
 
-          <label className="login__checkbox">
-            <input
-              type="checkbox"
-              name="remember"
-              checked={form.remember}
-              onChange={handleChange}
-            />
-            <span>Recordarme</span>
-          </label>
+          {error && <div className="auth-error">{error}</div>}
 
-          {serverError && (
-            <div className="login__server-error" role="alert">
-              {serverError}
-            </div>
-          )}
-
-          <button className="login__submit" type="submit" disabled={loading || hasErrors}>
+          <button className="auth-button" type="submit" disabled={!canSubmit}>
             {loading ? "Ingresando..." : "Ingresar"}
           </button>
         </form>
-      </section>
+
+        <div className="auth-footer">
+          <small>API: {API_BASE_URL ? API_BASE_URL : "No configurada"}</small>
+        </div>
+      </div>
     </div>
-  )
-
-
-export default Login 
+  );
 }
