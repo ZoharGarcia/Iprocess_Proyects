@@ -1,0 +1,41 @@
+/vendor
+/composer.phar
+/composer.lock   
+/node_modules
+/npm-debug.log
+/yarn-error.log
+/yarn.lock       
+
+.env
+.env.backup
+.env.*           
+.env.example     
+/storage/*.key
+/bootstrap/cache/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+/public/hot
+/public/storage  # Symlink generado por `php artisan storage:link`
+
+.idea/           # PhpStorm / IntelliJ
+.vscode/         # Visual Studio Code
+/.fleet/
+/.nova/
+/.zed/
+*.sublime-project
+*.sublime-workspace
+
+/phpunit.result.cache
+/.phpunit.result.cache
+
+.DS_Store        # macOS
+Thumbs.db        # Windows
+*.swp
+*~
+ehthumbs.db
+
+/public/build    # Assets compilados por Vite
+/mix-manifest.json
