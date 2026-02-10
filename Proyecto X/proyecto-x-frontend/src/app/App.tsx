@@ -1,5 +1,3 @@
-// ayudame a comentariar este código de React con TypeScript, explicando cada parte y su función en el contexto de una aplicación de autenticación y rutas protegidas.
-
 // Importaciones necesarias para la aplicación
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "@/pages/Login";

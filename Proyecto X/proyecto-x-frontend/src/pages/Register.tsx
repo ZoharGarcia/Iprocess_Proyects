@@ -1,7 +1,10 @@
-// src/pages/Register.tsx
-import { useState, useMemo, useEffect } from "react";
+// Importaciones
+
+import { useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/Register.css";
+
+// Tipos/Types
 
 type FormState = {
   name: string;
@@ -10,7 +13,32 @@ type FormState = {
   passwordConfirm: string;
 };
 
+type ApiRegisterResponse = {
+  token?: string;
+};
+
+// Utilidades
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function getApiBaseUrl(): string {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  return typeof baseUrl === "string" ? baseUrl.replace(/\/$/, "") : "";
+}
+
+function extractToken(payload: unknown): string | null { // Función para extraer el token de autenticación de la respuesta de la API. Devuelve el token si está presente, o null si no se encuentra.
+  if ( // Condicion para verificar si el payload es un objeto que contiene un token de autenticación en alguna de las posibles propiedades (token, access_token o data.token) y que dicho token es una cadena. Si se cumple esta condición, devuelve el token; de lo contrario, devuelve null.
+    payload &&
+    typeof payload === "object" &&
+    "token" in payload &&
+    typeof (payload as { token: unknown }).token === "string"
+  ) {
+    return (payload as { token: string }).token;
+  }
+  return null;
+}
+
+// Componente principal de la página de registro
 
 export default function Register() {
   const navigate = useNavigate();
@@ -33,7 +61,9 @@ export default function Register() {
   const [uiError, setUiError] = useState<string | null>(null);
   const [emailExists, setEmailExists] = useState<boolean | null>(null);
 
-  // Validaciones de frontend
+/**Validaciones de campos del formulario utilizando useMemo para memorizar los errores y evitar cálculos innecesarios en cada renderizado. 
+Verifica que el nombre tenga al menos 2 caracteres, que el correo sea válido, que la contraseña tenga al menos 6 caracteres y que la confirmación de contraseña coincida con la contraseña.*/
+
   const errors = useMemo(() => {
     const next: Partial<Record<keyof FormState, string>> = {};
     const name = form.name.trim();
@@ -67,36 +97,16 @@ export default function Register() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  // Validación de email en tiempo real
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (emailRegex.test(form.email)) {
-        checkEmail(form.email).then(setEmailExists).catch(() => setEmailExists(null));
-      } else {
-        setEmailExists(null);
-      }
-    }, 500); // debounce de 500ms
+// Submit
+/* Función para manejar el envío del formulario de registro. Realiza la validación de los campos, muestra errores si es necesario, y si todo es correcto, envía una solicitud a la API para intentar crear una nueva cuenta. Si el registro es exitoso, almacena el token de autenticación y redirige al usuario al dashboard. 
+Si ocurre algún error durante este proceso, muestra un mensaje de error en la interfaz de usuario.*/
 
-    return () => clearTimeout(timer);
-  }, [form.email]);
-
-  async function checkEmail(email: string) {
-    const base = import.meta.env.VITE_API_BASE_URL;
-    const res = await fetch(`${base}/check-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json();
-    return data.exists;
-  }
-
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setTouched({ name: true, email: true, password: true, passwordConfirm: true });
     setUiError(null);
 
-    if (!canSubmit) return;
+    if (!canSubmit) return; // Si no se puede enviar el formulario (por ejemplo, si hay errores de validación o si ya se está procesando una solicitud), simplemente retorna y no realiza ninguna acción.
 
     setLoading(true);
     try {
@@ -120,16 +130,7 @@ export default function Register() {
         return;
       }
 
-      // Guardar token si existe
-const token =
-  "token" in data && typeof (data as { token: string }).token === "string"
-    ? (data as { token: string }).token
-    : "access_token" in data && typeof (data as { access_token: string }).access_token === "string"
-    ? (data as { access_token: string }).access_token
-    : "data" in data && data.data && typeof data.data.token === "string"
-    ? data.data.token
-    : null;
-
+      const token = extractToken(data); // Intenta extraer el token de autenticación de la respuesta de la API utilizando la función extractToken. Si se encuentra un token válido, lo almacena en el almacenamiento local y redirige al usuario al dashboard. Si no se encuentra un token válido, redirige al usuario a la página de inicio de sesión.
       if (token) {
         localStorage.setItem("auth_token", token);
         navigate("/dashboard", { replace: true });
@@ -142,6 +143,8 @@ const token =
       setLoading(false);
     }
   }
+
+// UI
 
   return (
     <div className="register">
