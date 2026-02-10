@@ -1,4 +1,5 @@
 import { Layout } from "@/app/components/Layout";
+import { Storytelling as StoryTelling} from "@/app/components/StorytellingC";
 import { HeroStorytelling } from "@/app/components/HeroStorytelling";
 import { Helmet } from "react-helmet-async";
 
@@ -15,6 +16,7 @@ export default function Storytelling() {
 
     <Layout>
       <HeroStorytelling />
+      <StoryTelling />
     </Layout>
       </>
   );
