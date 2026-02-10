@@ -1,11 +1,14 @@
-# 🚀 Iprocess_Proyects
+# Iprocess_Proyects
 
-Repositorio de proyectos, prototipos y desarrollos internos de **iProcess**.  
-Incluye pruebas de UI modernas y el proyecto principal **Proyecto X** con arquitectura full-stack desacoplada.
+Repositorio de proyectos, prototipos y desarrollos internos de iProcess. Incluye pruebas de UI modernas y el proyecto principal Proyecto X con arquitectura full-stack desacoplada.
 
----
+## Contenido
 
-## 🧠 Stack Tecnológico
+- Prototipos en 0 IA y 10 IA (Vite + React)
+- Proyecto X (backend Laravel + frontend React)
+- Recursos compartidos en Imagenes
+
+## Stack tecnologico
 
 ### Frontend
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
@@ -18,54 +21,65 @@ Incluye pruebas de UI modernas y el proyecto principal **Proyecto X** con arquit
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![Composer](https://img.shields.io/badge/Composer-885630?style=for-the-badge&logo=composer&logoColor=white)
 
-### Control de Versiones
+### Control de versiones
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
----
-
-# 🧩 Proyecto X – Arquitectura
-
-Arquitectura desacoplada basada en:
+## Proyecto X: arquitectura
 
 - Backend API REST en Laravel
 - Frontend SPA en React + Vite
-- Comunicación vía HTTP (JSON)
+- Comunicacion via HTTP (JSON)
 - Estructura modular y escalable
 
----
+## Requisitos
 
-# ⚙️ Requisitos
-
-| Tecnología | Versión mínima |
+| Tecnologia | Version minima |
 |------------|---------------|
 | Node.js    | 18+ |
 | PHP        | 8.2+ |
-| Composer   | Última estable |
-| MySQL      | 8+ (según entorno) |
+| Composer   | Ultima estable |
+| MySQL      | 8+ (segun entorno) |
 
----
+## Instalacion y uso
 
-# 🚀 Instalación y Uso
-## 🖥 Prototipos 
-
+### Prototipos (0 IA y 10 IA)
 
 ```bash
 cd "0 IA"
 npm install
 npm run dev
+```
 
----
+Para el prototipo en 10 IA, usa el mismo flujo:
 
-Proyecto X
+```bash
+cd "10 IA"
+npm install
+npm run dev
+```
 
+### Proyecto X: backend
+
+```bash
 cd "Proyecto X/proyecto-x-backend"
-
 composer install
 cp .env.example .env
 php artisan key:generate
 php artisan migrate
 php artisan serve
 ```
----
+
+### Proyecto X: frontend
+
+```bash
+cd "Proyecto X/proyecto-x-frontend"
+npm install
+npm run dev
+```
+
+## Notas
+
+- Los prototipos usan Vite y sirven en modo desarrollo.
+- Proyecto X usa backend y frontend desacoplados; configura el URL del API segun tu entorno.
 
