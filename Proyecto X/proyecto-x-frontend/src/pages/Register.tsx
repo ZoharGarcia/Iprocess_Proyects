@@ -17,17 +17,23 @@ type ApiRegisterResponse =
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function getApiBaseUrl() {
-  const v = (import.meta as any)?.env?.VITE_API_BASE_URL;
+function getApiBaseUrl(): string {
+  const v = import.meta.env.VITE_API_BASE_URL;
   return typeof v === "string" ? v.replace(/\/$/, "") : "";
 }
 
-function extractToken(payload: ApiRegisterResponse): string | null {
-  if (typeof (payload as any)?.token === "string") return (payload as any).token;
-  if (typeof (payload as any)?.access_token === "string") return (payload as any).access_token;
-  if (typeof (payload as any)?.data?.token === "string") return (payload as any).data.token;
+function extractToken(payload: unknown): string | null {
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "token" in payload &&
+    typeof (payload as { token: unknown }).token === "string"
+  ) {
+    return (payload as { token: string }).token;
+  }
   return null;
 }
+
 
 export default function Register() {
   const navigate = useNavigate();
