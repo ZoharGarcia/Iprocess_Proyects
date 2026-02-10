@@ -1,12 +1,12 @@
 import { Layout } from "@/app/components/Layout";
 import { Industry } from "@/app/components/Industry";
-import { HeroIndustria } from "@/app/components/HeroIndustria";
+import { HeroStorytelling } from "@/app/components/HeroStorytelling";
 import { Helmet } from "react-helmet-async";
 
-export default function Industria() {
+export default function Storytelling() {
   return (
       <>
-            <Helmet>
+<Helmet>
   <title>Industrias - iProcess Ind</title>
   <meta
     name="description"
@@ -15,7 +15,7 @@ export default function Industria() {
 </Helmet>
 
     <Layout>
-      <HeroIndustria />
+      <HeroStorytelling />
       <Industry />
     </Layout>
       </>
