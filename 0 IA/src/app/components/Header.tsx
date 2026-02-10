@@ -82,12 +82,12 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <Link  
                 key={item.path}
                 to={item.path}
-                className={`relative px-4 py-2 text-sm font-medium transition-colors group ${
+                className={`relative px-3 py-2 text-[13px] font-medium transition-colors group ${
                   location.pathname === item.path
                     ? "text-primary"
                     : "text-foreground hover:text-primary"
@@ -107,12 +107,12 @@ export function Header() {
           </nav>
 
           {/* Right Side - CTA + Theme Toggle */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center space-x-3">
             <ThemeToggle />
             <Button asChild> 
               <Link
                 to="/contacto"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm px-4"
                 onClick={() => trackMenuClick("Solicita Presupuesto", true)}
               >
                 Solicita Presupuesto
