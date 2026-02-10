@@ -1,9 +1,9 @@
 import { Layout } from "@/app/components/Layout";
-import { Storytelling as StorytellingComponent } from "@/app/components/Storytelling";
+import { Storytelling } from "@/app/components/Storytelling";
 import { HeroStorytelling } from "@/app/components/HeroStorytelling";
 import { Helmet } from "react-helmet-async";
 
-export default function Storytelling() {
+export default function StorytellingP() {
   return (
       <>
           <Helmet>
@@ -16,7 +16,7 @@ export default function Storytelling() {
 
     <Layout>
       <HeroStorytelling />
-      <StorytellingComponent />
+      <Storytelling />
     </Layout>
       </>
   );
