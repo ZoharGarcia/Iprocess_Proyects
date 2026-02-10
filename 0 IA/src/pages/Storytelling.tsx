@@ -4,11 +4,11 @@ import { Helmet } from "react-helmet-async";
 import { WhatWeDo } from "@/app/components/WhatWeDo";
 import { WhoWeAre } from "@/app/components/WhoWeare";
 
-export default function Inicio() {
+export default function Storytelling() {
   return (
     <>
       <Helmet>
-        <title>Inicio - iProcess Ind</title>
+        <title>Storytelling - iProcess Ind</title>
         <meta
           name="description"
           content="Soluciones de automatización industrial, ingeniería y tecnología para la industria moderna."
@@ -16,7 +16,7 @@ export default function Inicio() {
       </Helmet>
 
       <Layout>
-        <Hero />
+        <Storytelling />
         <WhoWeAre />
         <WhatWeDo />
       </Layout>
