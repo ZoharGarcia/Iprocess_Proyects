@@ -1,10 +1,10 @@
+// Importaciones
+
 import { useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/Register.css";
 
-/* =======================
-   Tipos
-======================= */
+// Tipos/Types
 
 type FormState = {
   name: string;
@@ -17,9 +17,7 @@ type ApiRegisterResponse = {
   token?: string;
 };
 
-/* =======================
-   Utilidades
-======================= */
+// Utilidades
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -28,8 +26,8 @@ function getApiBaseUrl(): string {
   return typeof baseUrl === "string" ? baseUrl.replace(/\/$/, "") : "";
 }
 
-function extractToken(payload: unknown): string | null {
-  if (
+function extractToken(payload: unknown): string | null { // Función para extraer el token de autenticación de la respuesta de la API. Devuelve el token si está presente, o null si no se encuentra.
+  if ( // Condicion para verificar si el payload es un objeto que contiene un token de autenticación en alguna de las posibles propiedades (token, access_token o data.token) y que dicho token es una cadena. Si se cumple esta condición, devuelve el token; de lo contrario, devuelve null.
     payload &&
     typeof payload === "object" &&
     "token" in payload &&
@@ -40,9 +38,7 @@ function extractToken(payload: unknown): string | null {
   return null;
 }
 
-/* =======================
-   Componente
-======================= */
+// Componente principal de la página de registro
 
 export default function Register() {
   const navigate = useNavigate();
@@ -64,9 +60,8 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [uiError, setUiError] = useState<string | null>(null);
 
-  /* =======================
-     Validaciones
-  ======================= */
+/**Validaciones de campos del formulario utilizando useMemo para memorizar los errores y evitar cálculos innecesarios en cada renderizado. 
+Verifica que el nombre tenga al menos 2 caracteres, que el correo sea válido, que la contraseña tenga al menos 6 caracteres y que la confirmación de contraseña coincida con la contraseña.*/
 
   const errors = useMemo(() => {
     const e: Partial<Record<keyof FormState, string>> = {};
@@ -106,9 +101,9 @@ export default function Register() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  /* =======================
-     Submit
-  ======================= */
+// Submit
+/* Función para manejar el envío del formulario de registro. Realiza la validación de los campos, muestra errores si es necesario, y si todo es correcto, envía una solicitud a la API para intentar crear una nueva cuenta. Si el registro es exitoso, almacena el token de autenticación y redirige al usuario al dashboard. 
+Si ocurre algún error durante este proceso, muestra un mensaje de error en la interfaz de usuario.*/
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -120,7 +115,7 @@ export default function Register() {
       passwordConfirm: true,
     });
 
-    if (!canSubmit) return;
+    if (!canSubmit) return; // Si no se puede enviar el formulario (por ejemplo, si hay errores de validación o si ya se está procesando una solicitud), simplemente retorna y no realiza ninguna acción.
 
     setLoading(true);
     setUiError(null);
@@ -152,7 +147,7 @@ export default function Register() {
         return;
       }
 
-      const token = extractToken(data);
+      const token = extractToken(data); // Intenta extraer el token de autenticación de la respuesta de la API utilizando la función extractToken. Si se encuentra un token válido, lo almacena en el almacenamiento local y redirige al usuario al dashboard. Si no se encuentra un token válido, redirige al usuario a la página de inicio de sesión.
       if (token) {
         localStorage.setItem("auth_token", token);
         navigate("/dashboard", { replace: true });
@@ -166,9 +161,7 @@ export default function Register() {
     }
   }
 
-  /* =======================
-     UI
-  ======================= */
+// UI
 
   return (
     <div className="register">
