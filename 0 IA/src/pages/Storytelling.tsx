@@ -1,22 +1,22 @@
 import { Layout } from "@/app/components/Layout";
-import { Industry } from "@/app/components/Industry";
+import { Storytelling } from "@/app/components/Storytelling";
 import { HeroStorytelling } from "@/app/components/HeroStorytelling";
 import { Helmet } from "react-helmet-async";
 
 export default function Storytelling() {
   return (
       <>
-<Helmet>
-  <title>Industrias - iProcess Ind</title>
+          <Helmet>
+  <title>Storytelling - iProcess Ind</title>
   <meta
     name="description"
-    content="Soluciones tecnológicas y de automatización industrial para agroindustria, manufactura, energía, logística y producción sostenible."
+    content="Descubre cómo nuestras soluciones de automatización y tecnología transforman la narrativa de tu industria."
   />
 </Helmet>
 
     <Layout>
       <HeroStorytelling />
-      <Industry />
+      <Storytelling />
     </Layout>
       </>
   );
