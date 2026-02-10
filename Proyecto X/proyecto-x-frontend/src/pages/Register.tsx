@@ -82,7 +82,7 @@ export default function Register() {
 
   async function checkEmail(email: string) {
     const base = import.meta.env.VITE_API_BASE_URL;
-    const res = await fetch(`${base}/api/check-email`, {
+    const res = await fetch(`${base}/check-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -101,7 +101,7 @@ export default function Register() {
     setLoading(true);
     try {
       const base = import.meta.env.VITE_API_BASE_URL;
-      const res = await fetch(`${base}/api/register`, {
+      const res = await fetch(`${base}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
