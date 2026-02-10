@@ -2,7 +2,6 @@ import { Layout } from "@/app/components/Layout";
 import { Industry } from "@/app/components/Industry";
 import { HeroIndustria } from "@/app/components/HeroIndustria";
 import { Helmet } from "react-helmet-async";
-import Storytelling from "./Storytelling";
 
 export default function Industria() {
   return (
@@ -17,7 +16,7 @@ export default function Industria() {
 
     <Layout>
       <HeroIndustria />
-      <Storytelling />
+      <Industry />
     </Layout>
       </>
   );
