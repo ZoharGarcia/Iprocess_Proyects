@@ -18,84 +18,84 @@ import { Link } from "react-router-dom";
 const storytellingServices = [
 	{
 		icon: Lightbulb,
-		title: "Estrategia Narrativa",
+		title: "Curaduria de Proyectos",
 		description:
-			"Definimos el mensaje central, la audiencia y los objetivos para que cada historia impulse decisiones y resultados medibles.",
+			"Seleccionamos los proyectos con mayor impacto, contexto y aprendizajes clave.",
 	},
 	{
 		icon: PenTool,
-		title: "Guion y Storyboard",
+		title: "Resena y Contexto",
 		description:
-			"Traducimos procesos industriales complejos en guiones claros, con un enfoque técnico y humano.",
+			"Documentamos el reto inicial, la solucion aplicada y el valor aportado.",
 	},
 	{
 		icon: BookOpen,
 		title: "Casos de Exito",
 		description:
-			"Convertimos proyectos reales en historias de valor, mostrando impacto operativo, eficiencia y ROI.",
+			"Historias reales con resultados medibles en eficiencia, calidad y ROI.",
 	},
 	{
 		icon: BarChart3,
-		title: "Visualizacion de Datos",
+		title: "Indicadores Clave",
 		description:
-			"Graficas y dashboards que convierten datos industriales en argumentos claros y memorables.",
+			"KPIs, tiempos y mejoras presentados de forma clara y comparativa.",
 	},
 	{
 		icon: Video,
-		title: "Contenido Multimedia",
+		title: "Evidencia Visual",
 		description:
-			"Animaciones, videos explicativos y piezas audiovisuales para transmitir innovacion con claridad.",
+			"Imagenes, videos y recursos que respaldan cada caso con credibilidad.",
 	},
 	{
 		icon: Share2,
-		title: "Distribucion Multicanal",
+		title: "Publicacion y Archivo",
 		description:
-			"Planificamos la difusion en web, ferias, presentaciones comerciales y redes industriales.",
+			"Organizamos el portafolio para web, presentaciones y propuestas comerciales.",
 	},
 ];
 
 const storytellingFormats = [
 	{
 		icon: FileText,
-		title: "Articulos Tecnicos",
-		description: "Contenido editorial con enfoque industrial y respaldo tecnico.",
+		title: "Ficha de Proyecto",
+		description: "Resumen ejecutivo con alcance, tecnologia y resultados.",
 	},
 	{
 		icon: TrendingUp,
-		title: "Historias de Impacto",
-		description: "Antes y despues con indicadores de rendimiento y resultados.",
+		title: "Caso de Exito",
+		description: "Antes y despues con indicadores y aprendizajes clave.",
 	},
 	{
 		icon: Megaphone,
-		title: "Presentaciones Comerciales",
-		description: "Narrativas para ventas consultivas y licitaciones.",
+		title: "Resena de Cliente",
+		description: "Testimonio y valor percibido por el cliente.",
 	},
 ];
 
 const processSteps = [
 	{
 		step: "01",
-		title: "Diagnostico y Brief",
+		title: "Seleccion del Caso",
 		description:
-			"Analizamos el proceso, los datos clave y el publico objetivo para construir un mapa narrativo.",
+			"Definimos el proyecto, el reto y los objetivos que se van a documentar.",
 	},
 	{
 		step: "02",
-		title: "Construccion de la Historia",
+		title: "Analisis de Resultados",
 		description:
-			"Definimos guion, estructura y lenguaje tecnico adaptado a la industria.",
+			"Recopilamos datos, indicadores y evidencia para sustentar el impacto.",
 	},
 	{
 		step: "03",
-		title: "Produccion de Contenido",
+		title: "Redaccion y Diseno",
 		description:
-			"Disenamos piezas visuales, textos, videos y recursos que comunican valor real.",
+			"Creamos la resena, la ficha y los recursos visuales del proyecto.",
 	},
 	{
 		step: "04",
-		title: "Lanzamiento y Medicion",
+		title: "Publicacion y Actualizacion",
 		description:
-			"Publicamos y optimizamos con base en alcance, conversion y engagement.",
+			"Publicamos el caso y lo mantenemos actualizado con nuevos resultados.",
 	},
 ];
 
@@ -117,13 +117,12 @@ export function Storytelling() {
 					className="text-center max-w-3xl mx-auto mb-16"
 				>
 					<div className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
-						<span className="text-sm font-semibold text-primary">Storytelling Industrial</span>
+						<span className="text-sm font-semibold text-primary">Casos de Exito</span>
 					</div>
-					<h2 className="mb-6">Contenido que Explica, Convence y Genera Valor</h2>
+					<h2 className="mb-6">Resenas y Proyectos que Demuestran Resultados</h2>
 					<p className="text-lg text-muted-foreground leading-relaxed">
-						Transformamos la innovacion en mensajes claros para clientes, inversionistas y equipos
-						internos. Unimos datos, contexto y emocion para que tu tecnologia se entienda y se
-						recuerde.
+						Este apartado reune los proyectos y casos de exito de la empresa. Encontraras
+						resenas claras, resultados medibles y aprendizajes que respaldan nuestra experiencia.
 					</p>
 				</motion.div>
 
@@ -160,10 +159,10 @@ export function Storytelling() {
 					className="grid lg:grid-cols-2 gap-12 items-center mb-20"
 				>
 					<div>
-						<h3 className="mb-6">Formatos que Multiplican la Credibilidad</h3>
+						<h3 className="mb-6">Formatos para Documentar el Impacto</h3>
 						<p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-							Seleccionamos el formato ideal para tu industria y tu audiencia. Cada pieza se
-							construye con base en evidencia tecnica y narrativa estrategica.
+							Cada caso se presenta con evidencia tecnica, indicadores y contexto operativo para
+							facilitar la toma de decisiones.
 						</p>
 						<div className="grid gap-4">
 							{storytellingFormats.map((format, index) => (
@@ -187,7 +186,7 @@ export function Storytelling() {
 						<div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
 							<span className="text-xs font-semibold text-primary">Proceso iProcess</span>
 						</div>
-						<h3 className="mb-6">Como Construimos tu Historia</h3>
+						<h3 className="mb-6">Como Documentamos Cada Caso</h3>
 						<div className="space-y-5">
 							{processSteps.map((step) => (
 								<div key={step.step} className="flex gap-4">
@@ -210,10 +209,9 @@ export function Storytelling() {
 					className="text-center"
 				>
 					<Card className="p-8 sm:p-12 border-2 border-primary/20 bg-gradient-to-br from-card to-primary/5 shadow-xl max-w-4xl mx-auto">
-						<h3 className="mb-4">Listo para Contar tu Historia Industrial?</h3>
+						<h3 className="mb-4">Quieres Incluir tu Proyecto?</h3>
 						<p className="text-muted-foreground mb-6 text-lg">
-							Te ayudamos a convertir tecnologia en narrativa, y narrativa en oportunidades
-							comerciales reales.
+							Comparte tu proyecto y documentamos el caso con resultados claros y accionables.
 						</p>
 						<Button
 							size="lg"
@@ -221,7 +219,7 @@ export function Storytelling() {
 							className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
 						>
 							<Link to="/contacto">
-								Solicitar Sesion de Storytelling
+								Proponer un Caso de Exito
 								<ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
 							</Link>
 						</Button>

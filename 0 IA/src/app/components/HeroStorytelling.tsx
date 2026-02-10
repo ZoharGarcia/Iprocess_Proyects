@@ -55,10 +55,10 @@ export function HeroStorytelling() {
             className="mb-6 text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight"
           >
             <span className="block text-foreground">
-              Contamos Historias que
+              Casos de Exito y
             </span>
             <span className="block bg-gradient-to-r from-primary via-primary to-orange-dark bg-clip-text text-transparent">
-              Impulsan la Innovacion
+              Proyectos Destacados
             </span>
           </motion.h1>
 
@@ -68,9 +68,9 @@ export function HeroStorytelling() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl"
           >
-            Convertimos procesos complejos en historias claras y memorables. Desde la
-            automatizacion industrial hasta la transformacion digital, comunicamos el
-            valor real de la tecnologia con impacto humano y estrategico.
+            Un vistazo a las reseñas, proyectos y casos de exito de la empresa. Aqui
+            reunimos historias reales, resultados medibles y aprendizajes que inspiran
+            nuevas iniciativas.
           </motion.p>
 
           <motion.div
