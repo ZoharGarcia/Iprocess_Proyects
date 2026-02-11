@@ -39,7 +39,8 @@ Repositorio de proyectos, prototipos y desarrollos internos de iProcess. Incluye
 | Node.js    | 18+ |
 | PHP        | 8.2+ |
 | Composer   | Ultima estable |
-| MySQL      | 8+ (segun entorno) |
+| Postgre    |  
+| InfluxDB   | 
 
 ## Instalacion y uso
 
