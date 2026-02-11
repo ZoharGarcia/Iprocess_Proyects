@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import RegisterForm from "../app/components/RegisterForm";
 import "../styles/Register.css";
 
 type FormState = {
@@ -8,6 +9,10 @@ type FormState = {
   password: string;
   passwordConfirm: string;
 };
+
+type Errors = Partial<Record<keyof FormState, string>>;
+
+type Touched = Record<keyof FormState, boolean>;
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -26,11 +31,18 @@ export default function Register() {
     passwordConfirm: "",
   });
 
+  const [touched, setTouched] = useState<Touched>({
+    name: false,
+    email: false,
+    password: false,
+    passwordConfirm: false,
+  });
+
   const [loading, setLoading] = useState(false);
   const [uiError, setUiError] = useState<string | null>(null);
 
-  const errors = useMemo(() => {
-    const e: Partial<Record<keyof FormState, string>> = {};
+  const errors = useMemo<Errors>(() => {
+    const e: Errors = {};
 
     if (!form.name.trim()) e.name = "Ingresa tu nombre";
     else if (form.name.trim().length < 2) e.name = "Mínimo 2 caracteres";
@@ -50,11 +62,15 @@ export default function Register() {
 
   const canSubmit = !loading && Object.keys(errors).length === 0;
 
-  function setField<K extends keyof FormState>(key: K, value: string) {
-    setForm((p) => ({ ...p, [key]: value }));
+  function onChange(field: keyof FormState, value: string) {
+    setForm((p) => ({ ...p, [field]: value }));
   }
 
-  async function onSubmit(e: React.FormEvent) {
+  function onBlur(field: keyof FormState) {
+    setTouched((p) => ({ ...p, [field]: true }));
+  }
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit) return;
 
@@ -85,9 +101,7 @@ export default function Register() {
         return;
       }
 
-      // 🔥 Redirigir a login después de registrar
       navigate("/login", { replace: true });
-
     } catch {
       setUiError("Error de conexión");
     } finally {
@@ -96,46 +110,19 @@ export default function Register() {
   }
 
   return (
-    <div className="register">
-      <form className="register__card" onSubmit={onSubmit}>
-        <h1>Crear cuenta</h1>
-
-        {uiError && <div className="register__alert">{uiError}</div>}
-
-        <input
-          placeholder="Nombre"
-          value={form.name}
-          onChange={(e) => setField("name", e.target.value)}
-        />
-
-        <input
-          placeholder="Correo"
-          value={form.email}
-          onChange={(e) => setField("email", e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={form.password}
-          onChange={(e) => setField("password", e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Confirmar contraseña"
-          value={form.passwordConfirm}
-          onChange={(e) => setField("passwordConfirm", e.target.value)}
-        />
-
-        <button disabled={!canSubmit}>
-          {loading ? "Creando..." : "Crear cuenta"}
-        </button>
-
-        <p>
-          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
-        </p>
-      </form>
-    </div>
+    <RegisterForm
+      name={form.name}
+      email={form.email}
+      password={form.password}
+      passwordConfirm={form.passwordConfirm}
+      loading={loading}
+      canSubmit={canSubmit}
+      errors={errors}
+      touched={touched}
+      uiError={uiError}
+      onSubmit={onSubmit}
+      onChange={onChange}
+      onBlur={onBlur}
+    />
   );
 }
