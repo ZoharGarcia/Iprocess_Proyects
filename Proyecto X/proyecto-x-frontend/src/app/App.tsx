@@ -1,8 +1,9 @@
 // Importaciones necesarias para la aplicación
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import Home from "../pages/Home";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
-import Home from "../pages/Home";
+import Main from "../pages/Main";
 import "../styles/App.css";
 import React from "react";
 
@@ -95,6 +96,24 @@ export default function App() {
           isAuthenticated()
             ? <Navigate to="/dashboard" replace />
             : <Register />
+        }
+      />
+
+      <Route
+        path="/register"
+        element={
+          isAuthenticated()
+            ? <Navigate to="/dashboard" replace />
+            : <Register />
+        }
+      />
+
+     <Route
+        path="/main"
+        element={
+          isAuthenticated()
+            ? <Navigate to="/dashboard" replace />
+            : <Main />
         }
       />
 
