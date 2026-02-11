@@ -14,6 +14,15 @@ use App\Http\Controllers\Auth\LoginController;
 
 Route::post('/login', [LoginController::class, 'login']);
 
+Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
+    
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json([
+        'message' => 'Sesión cerrada correctamente'
+    ]);
+});
+
 // ===============================
 // REGISTRO
 // ===============================
