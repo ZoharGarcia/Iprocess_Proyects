@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
+use App\Http\Controllers\ContactoController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerifyEmailMail;
 use Illuminate\Support\Facades\Hash;
@@ -105,3 +106,5 @@ Route::post('/verify-code', function (Request $request) {
 
     return response()->json(['message' => 'Correo verificado correctamente']);
 });
+
+Route::post('/contacto', [ContactoController::class, 'enviar'])->name('contacto.enviar');
