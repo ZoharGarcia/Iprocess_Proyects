@@ -1,17 +1,18 @@
 // Importaciones
-
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "../app/components/LoginForm";
 import "../styles/Login.css";
 
-type FormState = { // Define el tipo FormState, que representa el estado del formulario de inicio de sesión, incluyendo los campos de correo electrónico, contraseña y la opción de recordar sesión.
+type FormState = {
+  // Define el tipo FormState, que representa el estado del formulario de inicio de sesión, incluyendo los campos de correo electrónico, contraseña y la opción de recordar sesión.
   email: string;
   password: string;
   remember: boolean;
 };
 
-type ApiLoginResponse = { // Define el tipo ApiLoginResponse, que representa la posible estructura de la respuesta de la API al intentar iniciar sesión. Puede contener un token de autenticación en diferentes formatos, dependiendo de cómo el backend lo envíe.
+type ApiLoginResponse = {
+  // Define el tipo ApiLoginResponse, que representa la posible estructura de la respuesta de la API al intentar iniciar sesión. Puede contener un token de autenticación en diferentes formatos, dependiendo de cómo el backend lo envíe.
   token?: string;
   access_token?: string;
   data?: { token?: string };
@@ -20,32 +21,45 @@ type ApiLoginResponse = { // Define el tipo ApiLoginResponse, que representa la 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function extractToken(payload: ApiLoginResponse): string | null {
-  return (
-    payload.token ??
-    payload.access_token ??
-    payload.data?.token ??
-    null
-  );
+  return payload.token ?? payload.access_token ?? payload.data?.token ?? null;
 }
 
-export default function Login() { // Componente para la página de inicio de sesión
+// Función para obtener la URL base de la API desde variables de entorno de Vite
+function getApiBaseUrl(): string {
+  const envUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
+
+  if (envUrl) {
+    // Quita posible slash final para evitar duplicados
+    return envUrl.endsWith("/") ? envUrl.slice(0, -1) : envUrl;
+  }
+
+  // Fallback solo en desarrollo si la variable no está definida
+  if (import.meta.env.MODE === "development") {
+    return "http://127.0.0.1:8000/api";
+  }
+
+  throw new Error("VITE_API_BASE_URL no está configurada");
+}
+
+export default function Login() {
+  // Componente para la página de inicio de sesión
   const navigate = useNavigate();
 
-// Define el estado del formulario utilizando el hook useState, inicializando los campos de correo electrónico, contraseña y la opción de recordar sesión con valores predeterminados.
-
-  const [form, setForm] = useState<FormState>({ // Estado del formulario, que incluye los campos de correo electrónico, contraseña y la opción de recordar sesión. Inicializa el correo electrónico y la contraseña como cadenas vacías, y la opción de recordar sesión como verdadera.
+  // Define el estado del formulario utilizando el hook useState, inicializando los campos de correo electrónico, contraseña y la opción de recordar sesión con valores predeterminados.
+  const [form, setForm] = useState<FormState>({
+    // Estado del formulario, que incluye los campos de correo electrónico, contraseña y la opción de recordar sesión. Inicializa el correo electrónico y la contraseña como cadenas vacías, y la opción de recordar sesión como verdadera.
     email: "",
     password: "",
     remember: true,
   });
 
-  const [touched, setTouched] = useState({ // Estado para rastrear si los campos del formulario han sido tocados (interactuados) por el usuario, lo que se utiliza para mostrar mensajes de error solo después de que el usuario haya interactuado con los campos. Inicializa ambos campos como no tocados (false).
+  const [touched, setTouched] = useState({
+    // Estado para rastrear si los campos del formulario han sido tocados (interactuados) por el usuario, lo que se utiliza para mostrar mensajes de error solo después de que el usuario haya interactuado con los campos. Inicializa ambos campos como no tocados (false).
     email: false,
     password: false,
   });
 
   // Estado para rastrear si la solicitud de inicio de sesión está en curso (loading) y para almacenar cualquier error de interfaz de usuario (uiError) que pueda ocurrir durante el proceso de inicio de sesión.
-
   const [loading, setLoading] = useState(false);
   const [uiError, setUiError] = useState<string | null>(null);
 
@@ -69,8 +83,8 @@ export default function Login() { // Componente para la página de inicio de ses
 
   // Funciones
   // Funciones para manejar cambios en los campos del formulario, eventos de desenfoque (blur) y el envío del formulario.
-
-  function onChange(field: keyof FormState, value: string | boolean) { // Función para manejar cambios en los campos del formulario. Actualiza el estado del formulario con el nuevo valor ingresado por el usuario para el campo correspondiente (correo electrónico, contraseña o la opción de recordar sesión).
+  function onChange(field: keyof FormState, value: string | boolean) {
+    // Función para manejar cambios en los campos del formulario. Actualiza el estado del formulario con el nuevo valor ingresado por el usuario para el campo correspondiente (correo electrónico, contraseña o la opción de recordar sesión).
     setForm((p) => ({ ...p, [field]: value }));
   }
 
@@ -78,7 +92,8 @@ export default function Login() { // Componente para la página de inicio de ses
     setTouched((t) => ({ ...t, [field]: true }));
   }
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) { // Función para manejar el envío del formulario de inicio de sesión. Realiza la validación de los campos, muestra errores si es necesario, y si todo es correcto, envía una solicitud a la API para intentar iniciar sesión. Si el inicio de sesión es exitoso, almacena el token de autenticación y redirige al usuario al dashboard.
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    // Función para manejar el envío del formulario de inicio de sesión. Realiza la validación de los campos, muestra errores si es necesario, y si todo es correcto, envía una solicitud a la API para intentar iniciar sesión. Si el inicio de sesión es exitoso, almacena el token de autenticación y redirige al usuario al dashboard.
     e.preventDefault();
     setTouched({ email: true, password: true });
     setUiError(null);
@@ -87,21 +102,20 @@ export default function Login() { // Componente para la página de inicio de ses
 
     setLoading(true);
 
-    // Intenta enviar una solicitud POST a la API de inicio de sesión con los datos del formulario. Si la respuesta es exitosa, extrae el token de autenticación de la respuesta y lo almacena en el almacenamiento local o de sesión según la opción seleccionada por el usuario. Luego, redirige al usuario al dashboard. Si ocurre algún error durante este proceso, muestra un mensaje de error en la interfaz de usuario.
-
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch(`${getApiBaseUrl()}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           email: form.email,
           password: form.password,
         }),
       });
 
-// Si la respuesta no es exitosa, lanza un error para ser capturado en el bloque catch. Si la respuesta es exitosa, intenta extraer el token de autenticación de la respuesta utilizando la función extractToken. Si no se encuentra un token válido, también lanza un error.
-
       const data: ApiLoginResponse = await res.json();
+
       if (!res.ok) throw new Error();
 
       const token = extractToken(data);

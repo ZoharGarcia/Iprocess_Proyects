@@ -1,10 +1,6 @@
-// Importaciones
-
 import { useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/Register.css";
-
-// Tipos/Types
 
 type FormState = {
   name: string;
@@ -13,12 +9,6 @@ type FormState = {
   passwordConfirm: string;
 };
 
-type ApiRegisterResponse = {
-  token?: string;
-};
-
-// Utilidades
-
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function getApiBaseUrl(): string {
@@ -26,22 +16,13 @@ function getApiBaseUrl(): string {
   return typeof baseUrl === "string" ? baseUrl.replace(/\/$/, "") : "";
 }
 
-function extractToken(payload: unknown): string | null { // Función para extraer el token de autenticación de la respuesta de la API. Devuelve el token si está presente, o null si no se encuentra.
-  if ( // Condicion para verificar si el payload es un objeto que contiene un token de autenticación en alguna de las posibles propiedades (token, access_token o data.token) y que dicho token es una cadena. Si se cumple esta condición, devuelve el token; de lo contrario, devuelve null.
-    payload &&
-    typeof payload === "object" &&
-    "token" in payload &&
-    typeof (payload as { token: unknown }).token === "string"
-  ) {
-    return (payload as { token: string }).token;
-  }
-  return null;
-}
-
-// Componente principal de la página de registro
-
 export default function Register() {
   const navigate = useNavigate();
+
+  const [step, setStep] = useState<"register" | "verify">("register");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [resendMessage, setResendMessage] = useState<string | null>(null);
+  const [resendLoading, setResendLoading] = useState(false);
 
   const [form, setForm] = useState<FormState>({
     name: "",
@@ -50,72 +31,41 @@ export default function Register() {
     passwordConfirm: "",
   });
 
-  const [touched, setTouched] = useState<Record<keyof FormState, boolean>>({
-    name: false,
-    email: false,
-    password: false,
-    passwordConfirm: false,
-  });
-
   const [loading, setLoading] = useState(false);
   const [uiError, setUiError] = useState<string | null>(null);
-
-/**Validaciones de campos del formulario utilizando useMemo para memorizar los errores y evitar cálculos innecesarios en cada renderizado. 
-Verifica que el nombre tenga al menos 2 caracteres, que el correo sea válido, que la contraseña tenga al menos 6 caracteres y que la confirmación de contraseña coincida con la contraseña.*/
 
   const errors = useMemo(() => {
     const e: Partial<Record<keyof FormState, string>> = {};
 
-    if (!form.name.trim()) {
-      e.name = "Ingresa tu nombre.";
-    } else if (form.name.trim().length < 2) {
-      e.name = "El nombre debe tener al menos 2 caracteres.";
-    }
+    const trimmedName = form.name.trim();
+    if (!trimmedName) e.name = "Ingresa tu nombre";
+    else if (trimmedName.length < 2) e.name = "Mínimo 2 caracteres";
 
-    if (!form.email.trim()) {
-      e.email = "Ingresa tu correo.";
-    } else if (!emailRegex.test(form.email)) {
-      e.email = "Correo inválido.";
-    }
+    if (!form.email.trim()) e.email = "Ingresa tu correo";
+    else if (!emailRegex.test(form.email)) e.email = "Correo inválido";
 
-    if (!form.password) {
-      e.password = "Ingresa tu contraseña.";
-    } else if (form.password.length < 6) {
-      e.password = "Mínimo 6 caracteres.";
-    }
+    if (!form.password) e.password = "Ingresa contraseña";
+    else if (form.password.length < 6) e.password = "Mínimo 6 caracteres";
 
-    if (!form.passwordConfirm) {
-      e.passwordConfirm = "Confirma tu contraseña.";
-    } else if (form.passwordConfirm !== form.password) {
-      e.passwordConfirm = "Las contraseñas no coinciden.";
-    }
+    if (!form.passwordConfirm) e.passwordConfirm = "Confirma contraseña";
+    else if (form.password !== form.passwordConfirm)
+      e.passwordConfirm = "No coinciden";
 
     return e;
   }, [form]);
 
-  const canSubmit =
-    !loading &&
-    Object.keys(errors).length === 0;
+  const canSubmit = !loading && Object.keys(errors).length === 0;
 
-  function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+  function setField<K extends keyof FormState>(key: K, value: string) {
+    setForm((p) => ({ ...p, [key]: value }));
   }
 
-// Submit
-/* Función para manejar el envío del formulario de registro. Realiza la validación de los campos, muestra errores si es necesario, y si todo es correcto, envía una solicitud a la API para intentar crear una nueva cuenta. Si el registro es exitoso, almacena el token de autenticación y redirige al usuario al dashboard. 
-Si ocurre algún error durante este proceso, muestra un mensaje de error en la interfaz de usuario.*/
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  // ===============================
+  // REGISTRO
+  // ===============================
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-
-    setTouched({
-      name: true,
-      email: true,
-      password: true,
-      passwordConfirm: true,
-    });
-
-    if (!canSubmit) return; // Si no se puede enviar el formulario (por ejemplo, si hay errores de validación o si ya se está procesando una solicitud), simplemente retorna y no realiza ninguna acción.
+    if (!canSubmit) return;
 
     setLoading(true);
     setUiError(null);
@@ -123,125 +73,187 @@ Si ocurre algún error durante este proceso, muestra un mensaje de error en la i
     try {
       const res = await fetch(`${getApiBaseUrl()}/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: form.name.trim(),
           email: form.email.trim(),
           password: form.password,
+          password_confirmation: form.passwordConfirm,
         }),
       });
 
-      const data: ApiRegisterResponse = await res.json().catch(() => ({}));
+      const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 409) {
-          setUiError("El correo ya está registrado.");
-        } else if (res.status === 422) {
-          setUiError("Datos inválidos. Revisa el formulario.");
-        } else {
-          setUiError("No se pudo crear la cuenta.");
-        }
+        const errorMsg =
+          data.message ||
+          data.errors?.email?.[0] ||
+          data.errors?.password?.[0] ||
+          "No se pudo registrar";
+        setUiError(errorMsg);
         return;
       }
 
-      const token = extractToken(data); // Intenta extraer el token de autenticación de la respuesta de la API utilizando la función extractToken. Si se encuentra un token válido, lo almacena en el almacenamiento local y redirige al usuario al dashboard. Si no se encuentra un token válido, redirige al usuario a la página de inicio de sesión.
-      if (token) {
-        localStorage.setItem("auth_token", token);
-        navigate("/dashboard", { replace: true });
-      } else {
-        navigate("/login", { replace: true });
-      }
+      setStep("verify");
     } catch {
-      setUiError("Error de conexión con el servidor.");
+      setUiError("Error de conexión");
     } finally {
       setLoading(false);
     }
   }
 
-// UI
+  // ===============================
+  // REENVIAR CÓDIGO
+  // ===============================
+  async function resendCode() {
+    setResendLoading(true);
+    setResendMessage(null);
+    setUiError(null);
 
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/send-verification-code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setUiError(data.message || "No se pudo reenviar el código");
+        return;
+      }
+
+      setResendMessage("¡Código reenviado! Revisa tu correo.");
+      setTimeout(() => setResendMessage(null), 5000);
+    } catch {
+      setUiError("Error de conexión al reenviar");
+    } finally {
+      setResendLoading(false);
+    }
+  }
+
+  // ===============================
+  // VERIFICAR CÓDIGO
+  // ===============================
+  async function verifyEmail() {
+    const code = verificationCode.trim();
+    if (!code || code.length !== 6 || !/^\d+$/.test(code)) {
+      setUiError("Ingresa un código válido de 6 dígitos");
+      return;
+    }
+
+    setLoading(true);
+    setUiError(null);
+
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/verify-code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email.trim(),
+          code,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setUiError(data.message || "Código inválido");
+        return;
+      }
+
+      navigate("/login", { replace: true });
+    } catch {
+      setUiError("Error del servidor");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ===============================
+  // UI VERIFICACIÓN
+  // ===============================
+  if (step === "verify") {
+    return (
+      <div className="register">
+        <div className="register__card">
+          <h1>Verifica tu correo</h1>
+          <p>
+            Enviamos un código a <b>{form.email}</b>
+          </p>
+
+          {uiError && <div className="register__alert">{uiError}</div>}
+          {resendMessage && <div className="register__success">{resendMessage}</div>}
+
+          <input
+            type="text"
+            inputMode="numeric"
+            maxLength={6}
+            placeholder="Código de 6 dígitos"
+            value={verificationCode}
+            onChange={(e) =>
+              setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
+          />
+
+          <button onClick={verifyEmail} disabled={loading}>
+            {loading ? "Verificando..." : "Verificar"}
+          </button>
+
+          <button
+            onClick={resendCode}
+            disabled={resendLoading}
+            className="register__resend"
+          >
+            {resendLoading ? "Enviando..." : "Reenviar código"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ===============================
+  // UI REGISTRO
+  // ===============================
   return (
     <div className="register">
-      <form className="register__card" onSubmit={onSubmit} noValidate>
-        <h1 className="register__title">Crear cuenta</h1>
-        <p className="register__subtitle">
-          Regístrate para acceder a Proyecto X
-        </p>
+      <form className="register__card" onSubmit={onSubmit}>
+        <h1>Crear cuenta</h1>
 
         {uiError && <div className="register__alert">{uiError}</div>}
 
-        {/* Nombre */}
-        <div className="register__field">
-          <label htmlFor="name">Nombre</label>
-          <input
-            id="name"
-            type="text"
-            value={form.name}
-            onChange={(e) => setField("name", e.target.value)}
-            onBlur={() => setTouched((t) => ({ ...t, name: true }))}
-          />
-          {touched.name && errors.name && (
-            <span className="register__error">{errors.name}</span>
-          )}
-        </div>
+        <input
+          placeholder="Nombre"
+          value={form.name}
+          onChange={(e) => setField("name", e.target.value)}
+        />
 
-        {/* Email */}
-        <div className="register__field">
-          <label htmlFor="email">Correo</label>
-          <input
-            id="email"
-            type="email"
-            value={form.email}
-            onChange={(e) => setField("email", e.target.value)}
-            onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-          />
-          {touched.email && errors.email && (
-            <span className="register__error">{errors.email}</span>
-          )}
-        </div>
+        <input
+          placeholder="Correo"
+          value={form.email}
+          onChange={(e) => setField("email", e.target.value)}
+        />
 
-        {/* Password */}
-        <div className="register__field">
-          <label htmlFor="password">Contraseña</label>
-          <input
-            id="password"
-            type="password"
-            value={form.password}
-            onChange={(e) => setField("password", e.target.value)}
-            onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-          />
-          {touched.password && errors.password && (
-            <span className="register__error">{errors.password}</span>
-          )}
-        </div>
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={form.password}
+          onChange={(e) => setField("password", e.target.value)}
+        />
 
-        {/* Confirm Password */}
-        <div className="register__field">
-          <label htmlFor="passwordConfirm">Confirmar contraseña</label>
-          <input
-            id="passwordConfirm"
-            type="password"
-            value={form.passwordConfirm}
-            onChange={(e) => setField("passwordConfirm", e.target.value)}
-            onBlur={() =>
-              setTouched((t) => ({ ...t, passwordConfirm: true }))
-            }
-          />
-          {touched.passwordConfirm && errors.passwordConfirm && (
-            <span className="register__error">
-              {errors.passwordConfirm}
-            </span>
-          )}
-        </div>
+        <input
+          type="password"
+          placeholder="Confirmar contraseña"
+          value={form.passwordConfirm}
+          onChange={(e) => setField("passwordConfirm", e.target.value)}
+        />
 
-        <button type="submit" disabled={!canSubmit}>
+        <button disabled={!canSubmit}>
           {loading ? "Creando..." : "Crear cuenta"}
         </button>
 
-        <p className="register__footer">
+        <p>
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
         </p>
       </form>

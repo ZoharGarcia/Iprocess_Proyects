@@ -18,4 +18,13 @@ export default defineConfig({
   },
 
   assetsInclude: ["**/*.svg", "**/*.csv"],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000',  // puerto de php artisan serve
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
