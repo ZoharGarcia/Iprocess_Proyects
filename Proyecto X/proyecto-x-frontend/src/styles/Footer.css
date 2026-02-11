@@ -1,50 +1,71 @@
-/* Basic footer layout for a clean, ordered look */
-.footer {
-	background: #0f172a;
-	color: #e2e8f0;
-	padding: 32px 20px;
+/* Footer styling hooks */
+.site-footer {
+	background: linear-gradient(135deg, hsl(223, 19%, 93%) 0%, #ced7ee 60%, #c9d4ee 100%);
+	color: #486080;
 }
 
-.footer__inner {
-	max-width: 1200px;
-	margin: 0 auto;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 20px;
+.site-footer__brand-name {
+	letter-spacing: 0.02em;
+}
+
+.site-footer__heading {
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: #142a46;
+}
+
+.site-footer__link {
+	position: relative;
+	display: inline-flex;
 	align-items: center;
-	justify-content: space-between;
+	gap: 6px;
 }
 
-.footer__brand {
-	font-size: 18px;
-	font-weight: 600;
-	letter-spacing: 0.5px;
+.site-footer__link::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: -3px;
+	width: 100%;
+	height: 2px;
+	background: linear-gradient(90deg, #ff7a18, #ff4d00);
+	opacity: 0;
+	transform: scaleX(0.6);
+	transform-origin: left center;
+	transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.footer__nav {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 16px;
+.site-footer__link:hover::after {
+	opacity: 1;
+	transform: scaleX(1);
 }
 
-.footer__nav a {
-	color: #cbd5f5;
-	text-decoration: none;
-	font-size: 14px;
+.site-footer__social-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 999px;
+	border: 1px solid rgba(226, 232, 240, 0.2);
+	transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.footer__nav a:hover {
-	color: #ffffff;
+.site-footer__social-link:hover {
+	transform: translateY(-2px);
+	border-color: rgba(255, 122, 24, 0.6);
 }
 
-.footer__meta {
-	font-size: 12px;
-	color: #94a3b8;
+.site-footer__cta {
+	box-shadow: 0 18px 30px rgba(255, 122, 24, 0.2);
+}
+
+.site-footer__bottom {
+	border-top-color: rgba(226, 232, 240, 0.15);
 }
 
 @media (max-width: 640px) {
-	.footer__inner {
-		flex-direction: column;
-		align-items: flex-start;
+	.site-footer__heading {
+		letter-spacing: 0.04em;
 	}
 }

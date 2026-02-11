@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "../app/components/LoginForm";
-import "../styles/Login.css";
+import "../styles/App.css";
 
 type FormState = {
   // Define el tipo FormState, que representa el estado del formulario de inicio de sesión, incluyendo los campos de correo electrónico, contraseña y la opción de recordar sesión.

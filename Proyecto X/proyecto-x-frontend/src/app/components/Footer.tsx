@@ -26,14 +26,14 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-background border-t border-border mt-auto">
+    <footer className="site-footer bg-background border-t border-border mt-auto">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
           {/* Columna 1: Logo + Descripción + Social */}
           <div className="space-y-6">
             <Link 
               to="/" 
-              className="flex items-center gap-3"
+              className="site-footer__brand flex items-center gap-3"
               onClick={() => trackLinkClick("Footer Logo")}
             >
               <img
@@ -41,7 +41,7 @@ export function Footer() {
                 alt="Proyecto X - iProcess Ind"
                 className="h-8 w-auto"
               />
-              <span className="text-lg font-semibold">Proyecto X</span>
+              <span className="site-footer__brand-name text-lg font-semibold">Proyecto X</span>
             </Link>
             
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -55,7 +55,7 @@ export function Footer() {
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={() => trackLinkClick("Twitter")}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="site-footer__social-link text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Twitter className="h-5 w-5" />
               </a>
@@ -64,14 +64,14 @@ export function Footer() {
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={() => trackLinkClick("LinkedIn")}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="site-footer__social-link text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
               <a 
                 href="mailto:contacto@iprocessind.com" 
                 onClick={() => trackLinkClick("Email")}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="site-footer__social-link text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Mail className="h-5 w-5" />
               </a>
@@ -81,12 +81,12 @@ export function Footer() {
 
           {/* Columna 2: Producto */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Producto</h3>
+            <h3 className="site-footer__heading text-sm font-semibold mb-4">Producto</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link 
                   to="/caracteristicas" 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("Características Footer")}
                 >
                   Características
@@ -95,7 +95,7 @@ export function Footer() {
               <li>
                 <Link 
                   to="/precios" 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("Precios Footer")}
                 >
                   Precios y Planes
@@ -104,7 +104,7 @@ export function Footer() {
               <li>
                 <Link 
                   to="/dashboard" 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("Dashboard Footer")}
                 >
                   Dashboard Demo
@@ -113,7 +113,7 @@ export function Footer() {
               <li>
                 <Link 
                   to="/documentacion" 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("Documentación Footer")}
                 >
                   Documentación
@@ -124,12 +124,12 @@ export function Footer() {
 
           {/* Columna 3: Empresa */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Empresa</h3>
+            <h3 className="site-footer__heading text-sm font-semibold mb-4">Empresa</h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link 
                   to="/acerca" // Crea esta página si no existe
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("Acerca de Nosotros")}
                 >
                   Acerca de Nosotros
@@ -138,7 +138,7 @@ export function Footer() {
               <li>
                 <Link 
                   to="/blog" 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("Blog")}
                 >
                   Blog
@@ -147,7 +147,7 @@ export function Footer() {
               <li>
                 <Link 
                   to="/partner" 
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("Socios")}
                 >
                   Socios y Partners
@@ -158,7 +158,7 @@ export function Footer() {
                   href="https://prueba-iprocess.vercel.app" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => trackLinkClick("iProcess Ind")}
                 >
                   iProcess Ind
@@ -170,12 +170,12 @@ export function Footer() {
           {/* Columna 4: Soporte + CTA */}
           <div className="space-y-6">
             <div>
-              <h3 className="text-sm font-semibold mb-4">Soporte</h3>
+              <h3 className="site-footer__heading text-sm font-semibold mb-4">Soporte</h3>
               <ul className="space-y-3 text-sm">
                 <li>
                   <Link 
                     to="/contacto" 
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                     onClick={() => trackLinkClick("Contacto Footer")}
                   >
                     Contacto
@@ -184,7 +184,7 @@ export function Footer() {
                 <li>
                   <Link 
                     to="/faq" // Si tienes FAQ
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                     onClick={() => trackLinkClick("FAQ")}
                   >
                     Preguntas Frecuentes
@@ -193,7 +193,7 @@ export function Footer() {
                 <li>
                   <a 
                     href="/soporte" // o enlace a portal de tickets
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="site-footer__link text-muted-foreground hover:text-foreground transition-colors"
                     onClick={() => trackLinkClick("Soporte Técnico")}
                   >
                     Soporte Técnico
@@ -206,7 +206,7 @@ export function Footer() {
               <p className="text-sm text-muted-foreground">
                 ¿Listo para optimizar tus procesos?
               </p>
-              <Button asChild variant="default" size="lg" className="w-full sm:w-auto">
+              <Button asChild variant="default" size="lg" className="site-footer__cta w-full sm:w-auto">
                 <Link 
                   to="/register"
                   onClick={trackCTA}
@@ -219,7 +219,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+        <div className="site-footer__bottom mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <p>
             &copy; {currentYear} iProcess Ind. Todos los derechos reservados.
           </p>
@@ -227,14 +227,14 @@ export function Footer() {
           <div className="flex items-center gap-6">
             <Link 
               to="/privacidad" 
-              className="hover:text-foreground transition-colors"
+              className="site-footer__link hover:text-foreground transition-colors"
               onClick={() => trackLinkClick("Política de Privacidad")}
             >
               Privacidad
             </Link>
             <Link 
               to="/terminos" 
-              className="hover:text-foreground transition-colors"
+              className="site-footer__link hover:text-foreground transition-colors"
               onClick={() => trackLinkClick("Términos de Servicio")}
             >
               Términos

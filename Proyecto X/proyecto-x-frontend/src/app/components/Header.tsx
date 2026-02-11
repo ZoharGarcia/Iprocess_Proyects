@@ -59,9 +59,9 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`site-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-lg"
+          ? "is-scrolled bg-background/95 backdrop-blur-md border-b border-border shadow-lg"
           : "bg-transparent"
       }`}
     >
@@ -70,7 +70,7 @@ export function Header() {
           {/* Logo con subtítulo */}
           <Link 
             to="/" 
-            className="flex items-center group z-10"
+            className="site-header__brand flex items-center group z-10"
             onClick={() => trackMenuClick("Logo", false)}
           >
             <img
@@ -78,18 +78,18 @@ export function Header() {
               alt="Proyecto X - iProcess Ind"
               className="h-8 w-auto drop-shadow-md"
             />
-            <span className="ml-2 text-sm font-medium text-foreground/80 hidden sm:block">
+            <span className="site-header__subtitle ml-2 text-sm font-medium text-foreground/80 hidden sm:block">
               Monitoreo de Sensores en la Nube
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav className="site-header__nav hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
               <Link  
                 key={item.path}
                 to={item.path}
-                className={`relative px-4 py-2 text-sm font-medium transition-colors group ${
+                className={`site-header__nav-link relative px-4 py-2 text-sm font-medium transition-colors group ${
                   location.pathname === item.path
                     ? "text-primary"
                     : "text-foreground hover:text-primary"
@@ -104,7 +104,7 @@ export function Header() {
               >
                 {item.label}
                 <span
-                  className={`absolute bottom-0 left-0 right-0 h-0.5 bg-primary transition-all duration-300 ${
+                  className={`site-header__nav-underline absolute bottom-0 left-0 right-0 h-0.5 bg-primary transition-all duration-300 ${
                     activeSection === item.section
                       ? "opacity-100 scale-x-100"
                       : "opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100"
@@ -120,7 +120,7 @@ export function Header() {
             <Button asChild> 
               <Link
                 to="/register" // O a /precios o dashboard
-                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="site-header__cta bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 onClick={() => trackMenuClick("Comienza Ahora", true)}
               >
                 Comienza Ahora
@@ -129,11 +129,11 @@ export function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center space-x-3 z-10">
+          <div className="site-header__mobile flex lg:hidden items-center space-x-3 z-10">
             <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-lg hover:bg-muted transition-colors"
+              className="site-header__mobile-button p-2 rounded-lg hover:bg-muted transition-colors"
               aria-label="Toggle menu"
               aria-expanded={isMenuOpen}
             >
@@ -149,13 +149,13 @@ export function Header() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden border-t border-border bg-background/98 backdrop-blur-md shadow-xl">
+        <div className="site-header__mobile-panel lg:hidden border-t border-border bg-background/98 backdrop-blur-md shadow-xl">
           <nav className="container mx-auto px-4 py-6 space-y-1">
             {navItems.map((item) => (
               <Link  
                 key={item.path}
                 to={item.path}
-                className={`block w-full text-left px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                className={`site-header__mobile-link block w-full text-left px-4 py-3 text-base font-medium rounded-lg transition-colors ${
                   location.pathname === item.path
                     ? "bg-primary text-primary-foreground"
                     : "text-foreground hover:bg-muted"
@@ -176,7 +176,7 @@ export function Header() {
               <Button asChild>  
                 <Link
                   to="/registro"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
+                  className="site-header__cta w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
                   onClick={() => {
                     trackMenuClick("Comienza Ahora", true);
                     setIsMenuOpen(false);
