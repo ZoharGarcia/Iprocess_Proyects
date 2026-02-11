@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -22,10 +23,11 @@ class ContactoMailable extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Nuevo mensaje de contacto',   // Asunto del correo
-            from: 'no-reply@tudominio.com',         // Opcional, si no usas el del .env
+            subject: 'Nuevo mensaje de contacto',
         );
     }
+
+
 
     public function content(): Content
     {

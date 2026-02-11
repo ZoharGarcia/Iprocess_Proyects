@@ -7,6 +7,8 @@ use App\Http\Controllers\ContactoController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerifyEmailMail;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\ContactoMailable;
+
 use App\Http\Controllers\Auth\RegisterController;
 use Carbon\Carbon;
 
@@ -107,4 +109,17 @@ Route::post('/verify-code', function (Request $request) {
     return response()->json(['message' => 'Correo verificado correctamente']);
 });
 
-Route::post('/contacto', [ContactoController::class, 'enviar'])->name('contacto.enviar');
+Route::post('/contacto', [ContactoController::class, 'enviar'])
+    ->name('contacto.enviar');
+
+    Route::get('/test-mail', function () {
+        $datos = [
+            'nombre' => 'Bismarck',
+            'email' => 'bismar@test.com',
+            'mensaje' => 'Mensaje de prueba desde Laravel'
+        ];
+
+        Mail::to('bismaracevedo003@gmail.com')->send(new ContactoMailable($datos));
+
+        return 'Correo enviado';
+    });
