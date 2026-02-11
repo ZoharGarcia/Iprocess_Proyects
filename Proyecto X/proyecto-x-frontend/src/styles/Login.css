@@ -8,7 +8,7 @@
   place-items: center;
   padding: 28px;
 
-  /* Fondo suave tipo "papel" + puntitos */
+  /* Fondo suave tipo */
   background:
     radial-gradient(circle at 10% 15%, rgba(255, 106, 0, 0.10) 0%, transparent 40%),
     radial-gradient(circle at 90% 85%, rgba(255, 106, 0, 0.08) 0%, transparent 45%),
@@ -44,7 +44,7 @@
   justify-items: center;
   gap: 14px;
 
-  /* Panel claro con toque de gradiente */
+  /* Panel */
   background:
     radial-gradient(circle at 30% 20%, rgba(255, 106, 0, 0.10), transparent 55%),
     linear-gradient(135deg, rgba(2, 6, 23, 0.03), rgba(2, 6, 23, 0.01));
@@ -255,7 +255,7 @@
   margin-top: 6px;
   text-align: center;
   font-size: 13px;
-  color: rgba(15, 23, 42, 0.60); /* arregla tu color que estaba “modo oscuro” */
+  color: rgba(15, 23, 42, 0.60); 
 }
 
 /* ============================= */
