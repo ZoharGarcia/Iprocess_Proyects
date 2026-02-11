@@ -1,0 +1,10 @@
+/* Estilo sencillo de Header  */
+
+.header {
+  background-color: #dd611a;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
