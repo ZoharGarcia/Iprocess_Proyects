@@ -8,9 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\VerifyEmailMail;
-use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
@@ -29,27 +26,15 @@ class RegisterController extends Controller
             ], 422);
         }
 
-        // Código de 6 dígitos con expiración de 10 minutos
-        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
         $user = User::create([
-            'name'                       => $request->name,
-            'email'                      => $request->email,
-            'password'                   => Hash::make($request->password),
-            'email_verified_at'          => null,
-            'verification_code'          => $code,
-            'verification_code_expires_at' => Carbon::now()->addMinutes(10),
+            'name'              => $request->name,
+            'email'             => $request->email,
+            'password'          => Hash::make($request->password),
+            'email_verified_at' => null,
         ]);
 
-        // Enviar correo
-        Mail::to($user->email)->send(new VerifyEmailMail($user->name, $code));
-
-        // Opcional: token Sanctum
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
-            'message' => 'Usuario creado. Revisa tu correo para el código de verificación.',
-            'token'   => $token,
+            'message' => 'Usuario creado correctamente',
             'user'    => $user->only(['id', 'name', 'email']),
         ], 201);
     }

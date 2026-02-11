@@ -19,11 +19,6 @@ function getApiBaseUrl(): string {
 export default function Register() {
   const navigate = useNavigate();
 
-  const [step, setStep] = useState<"register" | "verify">("register");
-  const [verificationCode, setVerificationCode] = useState("");
-  const [resendMessage, setResendMessage] = useState<string | null>(null);
-  const [resendLoading, setResendLoading] = useState(false);
-
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -37,9 +32,8 @@ export default function Register() {
   const errors = useMemo(() => {
     const e: Partial<Record<keyof FormState, string>> = {};
 
-    const trimmedName = form.name.trim();
-    if (!trimmedName) e.name = "Ingresa tu nombre";
-    else if (trimmedName.length < 2) e.name = "Mínimo 2 caracteres";
+    if (!form.name.trim()) e.name = "Ingresa tu nombre";
+    else if (form.name.trim().length < 2) e.name = "Mínimo 2 caracteres";
 
     if (!form.email.trim()) e.email = "Ingresa tu correo";
     else if (!emailRegex.test(form.email)) e.email = "Correo inválido";
@@ -60,9 +54,6 @@ export default function Register() {
     setForm((p) => ({ ...p, [key]: value }));
   }
 
-  // ===============================
-  // REGISTRO
-  // ===============================
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
@@ -94,7 +85,9 @@ export default function Register() {
         return;
       }
 
-      setStep("verify");
+      // 🔥 Redirigir a login después de registrar
+      navigate("/login", { replace: true });
+
     } catch {
       setUiError("Error de conexión");
     } finally {
@@ -102,120 +95,6 @@ export default function Register() {
     }
   }
 
-  // ===============================
-  // REENVIAR CÓDIGO
-  // ===============================
-  async function resendCode() {
-    setResendLoading(true);
-    setResendMessage(null);
-    setUiError(null);
-
-    try {
-      const res = await fetch(`${getApiBaseUrl()}/send-verification-code`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.email.trim() }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setUiError(data.message || "No se pudo reenviar el código");
-        return;
-      }
-
-      setResendMessage("¡Código reenviado! Revisa tu correo.");
-      setTimeout(() => setResendMessage(null), 5000);
-    } catch {
-      setUiError("Error de conexión al reenviar");
-    } finally {
-      setResendLoading(false);
-    }
-  }
-
-  // ===============================
-  // VERIFICAR CÓDIGO
-  // ===============================
-  async function verifyEmail() {
-    const code = verificationCode.trim();
-    if (!code || code.length !== 6 || !/^\d+$/.test(code)) {
-      setUiError("Ingresa un código válido de 6 dígitos");
-      return;
-    }
-
-    setLoading(true);
-    setUiError(null);
-
-    try {
-      const res = await fetch(`${getApiBaseUrl()}/verify-code`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email.trim(),
-          code,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setUiError(data.message || "Código inválido");
-        return;
-      }
-
-      navigate("/login", { replace: true });
-    } catch {
-      setUiError("Error del servidor");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // ===============================
-  // UI VERIFICACIÓN
-  // ===============================
-  if (step === "verify") {
-    return (
-      <div className="register">
-        <div className="register__card">
-          <h1>Verifica tu correo</h1>
-          <p>
-            Enviamos un código a <b>{form.email}</b>
-          </p>
-
-          {uiError && <div className="register__alert">{uiError}</div>}
-          {resendMessage && <div className="register__success">{resendMessage}</div>}
-
-          <input
-            type="text"
-            inputMode="numeric"
-            maxLength={6}
-            placeholder="Código de 6 dígitos"
-            value={verificationCode}
-            onChange={(e) =>
-              setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))
-            }
-          />
-
-          <button onClick={verifyEmail} disabled={loading}>
-            {loading ? "Verificando..." : "Verificar"}
-          </button>
-
-          <button
-            onClick={resendCode}
-            disabled={resendLoading}
-            className="register__resend"
-          >
-            {resendLoading ? "Enviando..." : "Reenviar código"}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ===============================
-  // UI REGISTRO
-  // ===============================
   return (
     <div className="register">
       <form className="register__card" onSubmit={onSubmit}>

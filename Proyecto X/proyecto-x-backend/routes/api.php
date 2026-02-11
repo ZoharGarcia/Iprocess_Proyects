@@ -11,14 +11,6 @@ use Carbon\Carbon;
 
 use App\Http\Controllers\Auth\LoginController;
 
-Route::get('/test-mail', function () {
-    Mail::raw('SMTP OK Proyecto X', function ($m) {
-        $m->to('acevedobismar5@gmail.com')
-          ->subject('PRUEBA SMTP');
-    });
-
-    return 'correo enviado';
-});
 
 Route::post('/login', [LoginController::class, 'login']);
 
