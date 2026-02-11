@@ -176,7 +176,7 @@ export function Header() {
             <div className="pt-4">
               <Button asChild>  
                 <Link
-                  to="/registro"
+                  to="/register"
                   className="site-header__cta w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
                   onClick={() => {
                     trackMenuClick("Comienza Ahora", true);

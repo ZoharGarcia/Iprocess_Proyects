@@ -21,7 +21,7 @@ export function Footer() {
     ReactGA.event({
       category: "Footer",
       action: "Clic CTA",
-      label: "Comienza Ahora Footer",
+      label: "Comienza Ahora",
     });
   };
 
