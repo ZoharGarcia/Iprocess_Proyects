@@ -4,7 +4,9 @@ import Home from "../pages/Home";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Main from "../pages/Main";
-import "../styles/App.css";
+import "../styles/Header.css";
+import "../styles/index.css";
+import "../styles/Footer.css";
 import React from "react";
 
 // 🟢 Dashboard (protegido)
