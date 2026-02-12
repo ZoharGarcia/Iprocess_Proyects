@@ -34,7 +34,7 @@ export function VerifyResetCode() {
     setUiError(null);
 
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/verify-reset-code`, {
+      const res = await fetch(`${getApiBaseUrl()}/verify-reset-code`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), code: code.trim() }),

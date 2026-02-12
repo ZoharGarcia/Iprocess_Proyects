@@ -180,7 +180,7 @@ export function Login() {
               </Link>
 
                <div className="auth-register">
-                <Link className="auth-register__link" to="/password">
+                <Link className="auth-register__link" to="/forgot-password">
                  ¿Olvidaste tu contraseña?
                 </Link>
                </div>

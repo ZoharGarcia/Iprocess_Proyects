@@ -43,7 +43,7 @@ export function ChangePassword() {
     setUiError(null);
 
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/change-password`, {
+      const res = await fetch(`${getApiBaseUrl()}/change-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

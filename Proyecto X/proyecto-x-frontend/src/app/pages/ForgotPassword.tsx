@@ -32,7 +32,7 @@ export function ForgotPassword() {
     setUiError(null);
 
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/forgot-password`, {
+      const res = await fetch(`${getApiBaseUrl()}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
