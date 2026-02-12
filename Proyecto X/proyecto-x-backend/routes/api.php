@@ -109,17 +109,19 @@ Route::post('/verify-code', function (Request $request) {
     return response()->json(['message' => 'Correo verificado correctamente']);
 });
 
-Route::post('/contacto', [ContactoController::class, 'enviar'])
-    ->name('contacto.enviar');
-
-    Route::get('/test-mail', function () {
+Route::get('/test-mail', function () {
+    try {
         $datos = [
             'nombre' => 'Bismarck',
-            'email' => 'bismar@test.com',
+            'email' => 'acevedobismar5@gmail.com',
             'mensaje' => 'Mensaje de prueba desde Laravel'
         ];
 
-        Mail::to('bismaracevedo003@gmail.com')->send(new ContactoMailable($datos));
+        Mail::to('bismaracevedo003@gmail.com')
+            ->send(new \App\Mail\ContactoMailable($datos));
 
-        return 'Correo enviado';
-    });
+        return 'Correo enviado correctamente';
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+});
