@@ -9,14 +9,18 @@ import { NotFound } from "./pages/NotFound";
 
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
-import { Password } from "./pages/Password";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { VerifyCode } from "./pages/VerifyCode";
+import { NewPassword } from "./pages/NewPassword";
 
 
 export const router = createBrowserRouter([
   
   { path: "/login", Component: Login },
   { path: "/register", Component: Register },
-  { path: "/password", Component: Password },
+  { path: "/forgot-password", Component: ForgotPassword },
+  { path: "/verify-code", Component: VerifyCode },
+  { path: "/new-password", Component: NewPassword },
 
   {
     path: "/",
