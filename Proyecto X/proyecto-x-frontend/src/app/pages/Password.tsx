@@ -1,16 +1,12 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import "../../styles/login.css";
+import "../../styles/password.css";
 
 type FormState = {
   email: string;
+  code: string;
   password: string;
-  remember: boolean;
-};
-
-type Touched = {
-  email: boolean;
-  password: boolean;
+  passwordConfirm: string;
 };
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -20,18 +16,14 @@ function getApiBaseUrl(): string {
   return typeof baseUrl === "string" ? baseUrl.replace(/\/$/, "") : "";
 }
 
-export function Login() {
+export function Password() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState<FormState>({
     email: "",
+    code: "",
     password: "",
-    remember: true,
-  });
-
-  const [touched, setTouched] = useState<Touched>({
-    email: false,
-    password: false,
+    passwordConfirm: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -41,16 +33,24 @@ export function Login() {
     const e: Partial<Record<keyof FormState, string>> = {};
 
     if (!form.email.trim()) e.email = "Ingresa tu correo";
-    else if (!emailRegex.test(form.email)) e.email = "Correo inválido";
+    else if (!emailRegex.test(form.email.trim())) e.email = "Correo inválido";
 
-    if (!form.password) e.password = "Ingresa tu contraseña";
+    if (!form.code.trim()) e.code = "Ingresa el código";
+    else if (form.code.trim().length < 4) e.code = "Código inválido";
+
+    if (!form.password) e.password = "Ingresa una nueva contraseña";
+    else if (form.password.length < 6) e.password = "Mínimo 6 caracteres";
+
+    if (!form.passwordConfirm) e.passwordConfirm = "Confirma contraseña";
+    else if (form.passwordConfirm !== form.password)
+      e.passwordConfirm = "No coinciden";
 
     return e;
-  }, [form.email, form.password]);
+  }, [form]);
 
   const canSubmit = !loading && Object.keys(errors).length === 0;
 
-  function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
+  function setField<K extends keyof FormState>(key: K, value: string) {
     setForm((p) => ({ ...p, [key]: value }));
   }
 
@@ -62,12 +62,14 @@ export function Login() {
     setUiError(null);
 
     try {
-      const res = await fetch(`${getApiBaseUrl()}/login`, {
+      const res = await fetch(`${getApiBaseUrl()}/api/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: form.email.trim(),
+          code: form.code.trim(),
           password: form.password,
+          password_confirmation: form.passwordConfirm,
         }),
       });
 
@@ -77,20 +79,14 @@ export function Login() {
         const msg =
           data.message ||
           data.errors?.email?.[0] ||
+          data.errors?.code?.[0] ||
           data.errors?.password?.[0] ||
-          "No se pudo iniciar sesión";
+          "No se pudo restablecer la contraseña";
         setUiError(msg);
         return;
       }
 
-      // Guarda token si existe (tolerante a distintos nombres)
-      const token = data.token || data.access_token || data.auth_token;
-      if (token) {
-        const storage = form.remember ? localStorage : sessionStorage;
-        storage.setItem("auth_token", token);
-      }
-
-      navigate("/dashboard", { replace: true });
+      navigate("/login", { replace: true });
     } catch {
       setUiError("Error de conexión");
     } finally {
@@ -100,24 +96,25 @@ export function Login() {
 
   return (
     <div className="auth-shell">
-      <div className="auth-split">
+      <div className="auth-split auth-split--password">
         <aside className="auth-brand">
           <div className="auth-brand__logoWrap">
-            <div style={{ fontWeight: 800, fontSize: 18, letterSpacing: "0.06em" }}>
-              IPROCESS
-            </div>
+            <div className="auth-brand__mini">RECUPERACIÓN</div>
           </div>
 
           <div className="auth-brand__divider" />
+
           <h2 className="auth-brand__title">Proyecto X</h2>
-          <p className="auth-brand__subtitle">Accede a tu plataforma</p>
+          <p className="auth-brand__subtitle">
+            Ingresa el código y define una nueva contraseña.
+          </p>
         </aside>
 
         <main className="auth-panel">
           <form className="auth-form" onSubmit={onSubmit} noValidate>
             <div className="auth-header">
-              <h1>Iniciar Sesión</h1>
-              <p>Ingresa tus credenciales para continuar.</p>
+              <h1>Restablecer contraseña</h1>
+              <p>Completa los campos para recuperar tu cuenta.</p>
             </div>
 
             {uiError && (
@@ -134,56 +131,70 @@ export function Login() {
                 type="email"
                 value={form.email}
                 onChange={(e) => setField("email", e.target.value)}
-                onBlur={() => setTouched((p) => ({ ...p, email: true }))}
                 autoComplete="email"
-                placeholder="tucorreo@ejemplo.com"
+                placeholder="user@gmail.com"
               />
-              {touched.email && errors.email && (
+              {errors.email && (
                 <div className="auth-field-error">{errors.email}</div>
               )}
             </label>
 
+            <label className="auth-label" htmlFor="code">
+              Código
+              <input
+                id="code"
+                className="auth-input"
+                type="text"
+                value={form.code}
+                onChange={(e) => setField("code", e.target.value)}
+                placeholder="######"
+              />
+              {errors.code && (
+                <div className="auth-field-error">{errors.code}</div>
+              )}
+            </label>
+
             <label className="auth-label" htmlFor="password">
-              Contraseña
+              Nueva contraseña
               <input
                 id="password"
                 className="auth-input"
                 type="password"
                 value={form.password}
                 onChange={(e) => setField("password", e.target.value)}
-                onBlur={() => setTouched((p) => ({ ...p, password: true }))}
-                autoComplete="current-password"
-                placeholder="Ingresa tu contraseña"
+                autoComplete="new-password"
+                placeholder="Mínimo 6 caracteres"
               />
-              {touched.password && errors.password && (
+              {errors.password && (
                 <div className="auth-field-error">{errors.password}</div>
               )}
             </label>
 
-            <label className="auth-remember">
+            <label className="auth-label" htmlFor="passwordConfirm">
+              Confirmar contraseña
               <input
-                type="checkbox"
-                checked={form.remember}
-                onChange={(e) => setField("remember", e.target.checked)}
+                id="passwordConfirm"
+                className="auth-input"
+                type="password"
+                value={form.passwordConfirm}
+                onChange={(e) => setField("passwordConfirm", e.target.value)}
+                autoComplete="new-password"
+                placeholder="Repite tu contraseña"
               />
-              <span>Recordarme</span>
+              {errors.passwordConfirm && (
+                <div className="auth-field-error">{errors.passwordConfirm}</div>
+              )}
             </label>
 
             <button className="auth-button" type="submit" disabled={!canSubmit}>
-              {loading ? "Ingresando..." : "Entrar"}
+              {loading ? "Procesando..." : "Cambiar contraseña"}
             </button>
 
             <div className="auth-register">
-              <span>¿No tienes una cuenta?</span>{" "}
-              <Link className="auth-register__link" to="/register">
-                Regístrate
+              <span>¿Recordaste tu contraseña?</span>{" "}
+              <Link className="auth-register__link" to="/login">
+                Iniciar Sesión
               </Link>
-
-               <div className="auth-register">
-                <Link className="auth-register__link" to="/password">
-                 ¿Olvidaste tu contraseña?
-                </Link>
-               </div>
             </div>
           </form>
         </main>

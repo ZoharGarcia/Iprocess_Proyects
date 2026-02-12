@@ -9,11 +9,14 @@ import { NotFound } from "./pages/NotFound";
 
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { Password } from "./pages/Password";
+
 
 export const router = createBrowserRouter([
   
   { path: "/login", Component: Login },
   { path: "/register", Component: Register },
+  { path: "/password", Component: Password },
 
   {
     path: "/",
