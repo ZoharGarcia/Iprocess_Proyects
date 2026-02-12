@@ -36,8 +36,13 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline">Iniciar Sesión</Button>
-            <Button>Comenzar Gratis</Button>
+            <Link to="/login">
+              <Button variant="outline">Iniciar Sesión</Button>
+            </Link>
+
+            <Link to="/register">
+              <Button>Comenzar Gratis</Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
