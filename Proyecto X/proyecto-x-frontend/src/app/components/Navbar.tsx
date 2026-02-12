@@ -87,7 +87,7 @@ export function Navbar() {
                 Contacto
               </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                <Button variant="outline">Iniciar Sesión</Button>
+                <Button variant="outline">Iniciar Sesion</Button>
                 <Button>Comenzar Gratis</Button>
               </div>
             </div>

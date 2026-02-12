@@ -116,7 +116,7 @@ export function Login() {
         <main className="auth-panel">
           <form className="auth-form" onSubmit={onSubmit} noValidate>
             <div className="auth-header">
-              <h1>Iniciar sesión</h1>
+              <h1>Iniciar Sesión</h1>
               <p>Ingresa tus credenciales para continuar.</p>
             </div>
 
@@ -178,6 +178,12 @@ export function Login() {
               <Link className="auth-register__link" to="/register">
                 Regístrate
               </Link>
+
+               <div className="auth-register">
+                <Link className="auth-register__link" to="/password">
+                 ¿Olvidaste tu contraseña?
+                </Link>
+               </div>
             </div>
           </form>
         </main>
