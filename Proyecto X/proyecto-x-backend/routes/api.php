@@ -12,48 +12,28 @@ use App\Mail\PruebaCorreo;
 use App\Mail\ResetPasswordCodeMail;
 use App\Http\Controllers\Auth\RegisterController;
 use Carbon\Carbon;
-
 use App\Http\Controllers\Auth\LoginController;
 
+/*
+|--------------------------------------------------------------------------
+| RUTAS DE AUTENTICACIÓN (PÚBLICAS)
+|--------------------------------------------------------------------------
+*/
 
 Route::post('/login', [LoginController::class, 'login']);
-
-Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
-    
-    $request->user()->currentAccessToken()->delete();
-
-    return response()->json([
-        'message' => 'Sesión cerrada correctamente'
-    ]);
-});
 
 // ===============================
 // REGISTRO
 // ===============================
-/*
-Route::post('/register', function (Request $request) {
-    $request->validate([
-        'name'     => 'required|string|min:2',
-        'email'    => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6',
-    ]);
-
-    $user = User::create([
-        'name'              => $request->name,
-        'email'             => $request->email,
-        'password'          => Hash::make($request->password),
-        'email_verified_at' => null,
-    ]);
-
-    return response()->json([
-        'message' => 'Usuario registrado correctamente'
-    ], 201);
-});
-*/
 Route::post('/register', [RegisterController::class, 'register']);
-// ===============================
-// ENVIAR CÓDIGO
-// ===============================
+
+/*
+|--------------------------------------------------------------------------
+| VERIFICACIÓN DE CORREO ELECTRÓNICO
+|--------------------------------------------------------------------------
+*/
+
+// Envía código de verificación
 Route::post('/send-verification-code', function (Request $request) {
     $request->validate(['email' => 'required|email']);
 
@@ -80,15 +60,12 @@ Route::post('/send-verification-code', function (Request $request) {
     return response()->json(['message' => 'Código enviado al correo']);
 });
 
-
-// ===============================
-// VERIFICAR CÓDIGO
-// ===============================
+// Verifica el código de verificación
 Route::post('/verify-code', function (Request $request) {
 
     $request->validate([
         'email' => 'required|email',
-        'code' => 'required|string|size:6',
+        'code'  => 'required|string|size:6',
     ]);
 
     $user = User::where('email', $request->email)->first();
@@ -102,39 +79,21 @@ Route::post('/verify-code', function (Request $request) {
     }
 
     $user->update([
-        'email_verified_at' => now(),
-        'verification_code' => null,
+        'email_verified_at'          => now(),
+        'verification_code'          => null,
         'verification_code_expires_at' => null,
     ]);
 
     return response()->json(['message' => 'Correo verificado correctamente']);
 });
 
-Route::get('/test-mail', function () {
-    try {
-        Mail::raw('Correo de prueba', function ($message) {
-            $message->to('acevedobismar5@gmail.com')
-                    ->subject('Test');
-        });
+/*
+|--------------------------------------------------------------------------
+| RECUPERACIÓN DE CONTRASEÑA
+|--------------------------------------------------------------------------
+*/
 
-        return 'Correo enviado';
-    } catch (\Exception $e) {
-        return $e->getMessage();
-    }
-});
-Route::get('/enviar', function () {
-
-    Mail::to('destino@gmail.com')->send(
-        new PruebaCorreo(
-            'Bismar',
-            'Este correo fue enviado usando Gmail SMTP y Laravel.'
-        )
-    );
-
-    return 'Correo enviado correctamente';
-});
-
-
+// Envía código para restablecer contraseña
 Route::post('/forgot-password', function (Request $request) {
 
     $validated = $request->validate([
@@ -152,7 +111,7 @@ Route::post('/forgot-password', function (Request $request) {
     $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
     $user->forceFill([
-        'password_reset_code' => $code,
+        'password_reset_code'     => $code,
         'password_reset_expires_at' => now()->addMinutes(10),
     ])->save();
 
@@ -164,11 +123,12 @@ Route::post('/forgot-password', function (Request $request) {
     ]);
 });
 
+// Verifica el código de restablecimiento
 Route::post('/verify-reset-code', function (Request $request) {
 
     $validated = $request->validate([
         'email' => 'required|email',
-        'code' => 'required|string|size:6',
+        'code'  => 'required|string|size:6',
     ]);
 
     $user = User::where('email', $validated['email'])->first();
@@ -184,17 +144,18 @@ Route::post('/verify-reset-code', function (Request $request) {
     }
 
     return response()->json([
-        'message' => 'Código válido.',
+        'message'    => 'Código válido.',
         'reset_token' => base64_encode($user->email . '|' . $user->password_reset_code)
     ]);
 });
 
+// Cambia la contraseña usando el código (flujo de recuperación)
 Route::post('/change-password', function (Request $request) {
 
     $validated = $request->validate([
-        'email' => 'required|email',
-        'code' => 'required|string|size:6',
-        'password' => 'required|string|min:6|confirmed',
+        'email'     => 'required|email',
+        'code'      => 'required|string|size:6',
+        'password'  => 'required|string|min:6|confirmed',
     ]);
 
     $user = User::where('email', $validated['email'])->first();
@@ -210,8 +171,8 @@ Route::post('/change-password', function (Request $request) {
     }
 
     $user->forceFill([
-        'password' => Hash::make($validated['password']),
-        'password_reset_code' => null,
+        'password'                => Hash::make($validated['password']),
+        'password_reset_code'     => null,
         'password_reset_expires_at' => null,
     ])->save();
 
@@ -220,4 +181,114 @@ Route::post('/change-password', function (Request $request) {
     return response()->json([
         'message' => 'Contraseña actualizada correctamente.'
     ]);
+});
+
+/*
+|--------------------------------------------------------------------------
+| RUTAS PROTEGIDAS (requieren auth:sanctum)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
+    $request->user()->currentAccessToken()->delete();
+
+    return response()->json([
+        'message' => 'Sesión cerrada correctamente'
+    ]);
+});
+
+Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
+    return response()->json([
+        'user' => $request->user()
+    ]);
+});
+
+Route::middleware('auth:sanctum')->put('/profile', function (Request $request) {
+
+    $user = $request->user();
+
+    $validated = $request->validate([
+        'name'  => 'sometimes|string|max:255',
+        'phone' => 'sometimes|string|max:20',
+    ]);
+
+    $user->update($validated);
+
+    return response()->json([
+        'message' => 'Perfil actualizado correctamente.',
+        'user'    => $user
+    ]);
+});
+
+// Cambiar contraseña estando logueado (contraseña actual + nueva)
+Route::middleware('auth:sanctum')->put('/change-password', function (Request $request) {
+
+    $user = $request->user();
+
+    $validated = $request->validate([
+        'current_password' => 'required|string',
+        'password'         => 'required|string|min:6|confirmed',
+    ]);
+
+    if (!Hash::check($validated['current_password'], $user->password)) {
+        return response()->json([
+            'message' => 'La contraseña actual es incorrecta.'
+        ], 422);
+    }
+
+    $user->update([
+        'password' => Hash::make($validated['password'])
+    ]);
+
+    // Opcional: cerrar todas las sesiones
+    $user->tokens()->delete();
+
+    return response()->json([
+        'message' => 'Contraseña actualizada correctamente.'
+    ]);
+});
+
+Route::middleware('auth:sanctum')->delete('/account', function (Request $request) {
+
+    $user = $request->user();
+
+    // Eliminar tokens primero
+    $user->tokens()->delete();
+
+    // Eliminar usuario
+    $user->delete();
+
+    return response()->json([
+        'message' => 'Cuenta eliminada correctamente.'
+    ]);
+});
+
+/*
+|--------------------------------------------------------------------------
+| RUTAS DE PRUEBA / DESARROLLO
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/test-mail', function () {
+    try {
+        Mail::raw('Correo de prueba', function ($message) {
+            $message->to('acevedobismar5@gmail.com')
+                    ->subject('Test');
+        });
+
+        return 'Correo enviado';
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+});
+
+Route::get('/enviar', function () {
+    Mail::to('destino@gmail.com')->send(
+        new PruebaCorreo(
+            'Bismar',
+            'Este correo fue enviado usando Gmail SMTP y Laravel.'
+        )
+    );
+
+    return 'Correo enviado correctamente';
 });
