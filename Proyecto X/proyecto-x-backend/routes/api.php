@@ -266,6 +266,37 @@ Route::middleware('auth:sanctum')->delete('/account', function (Request $request
 
 /*
 |--------------------------------------------------------------------------
+| RUTAS DE ADMINISTRACIÓN (Solo Super Admin)
+|--------------------------------------------------------------------------
+|
+| Estas rutas están protegidas por dos middlewares:
+|   • auth:sanctum     → usuario debe estar autenticado con Sanctum
+|   • super.admin      → solo usuarios con rol super administrador
+|
+| Todas las rutas tienen el prefijo '/admin'
+|
+*/
+
+Route::middleware(['auth:sanctum', 'super.admin'])
+    ->prefix('admin')
+    ->group(function () {
+
+        // Listar todos los usuarios
+        Route::get('/users', [UserManagementController::class, 'index']);
+
+        // Mostrar un usuario específico
+        Route::get('/users/{id}', [UserManagementController::class, 'show']);
+
+        // Actualizar datos de un usuario
+        Route::put('/users/{id}', [UserManagementController::class, 'update']);
+
+        // Eliminar un usuario
+        Route::delete('/users/{id}', [UserManagementController::class, 'destroy']);
+
+    });
+    
+/*
+|--------------------------------------------------------------------------
 | RUTAS DE PRUEBA / DESARROLLO
 |--------------------------------------------------------------------------
 */
@@ -292,15 +323,4 @@ Route::get('/enviar', function () {
     );
 
     return 'Correo enviado correctamente';
-});
-
-Route::middleware(['auth:sanctum', 'super.admin'])
-    ->prefix('admin')
-    ->group(function () {
-
-        Route::get('/users', [UserManagementController::class, 'index']);
-        Route::get('/users/{id}', [UserManagementController::class, 'show']);
-        Route::put('/users/{id}', [UserManagementController::class, 'update']);
-        Route::delete('/users/{id}', [UserManagementController::class, 'destroy']);
-
 });
