@@ -14,6 +14,8 @@ use App\Mail\ResetPasswordCodeMail;
 use App\Http\Controllers\Auth\RegisterController;
 use Carbon\Carbon;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Company\CompanyUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -269,17 +271,19 @@ Route::middleware('auth:sanctum')->delete('/account', function (Request $request
 | RUTAS DE ADMINISTRACIÓN (Solo Super Admin)
 |--------------------------------------------------------------------------
 |
-| Estas rutas están protegidas por dos middlewares:
+| Estas rutas están protegidas por:
 |   • auth:sanctum     → usuario debe estar autenticado con Sanctum
-|   • super.admin      → solo usuarios con rol super administrador
+|   • super.admin      → solo usuarios con rol de super administrador
 |
-| Todas las rutas tienen el prefijo '/admin'
+| Prefijo: /admin
 |
 */
 
 Route::middleware(['auth:sanctum', 'super.admin'])
     ->prefix('admin')
     ->group(function () {
+
+        /* ====================== GESTIÓN DE USUARIOS ====================== */
 
         // Listar todos los usuarios
         Route::get('/users', [UserManagementController::class, 'index']);
@@ -293,8 +297,43 @@ Route::middleware(['auth:sanctum', 'super.admin'])
         // Eliminar un usuario
         Route::delete('/users/{id}', [UserManagementController::class, 'destroy']);
 
+        /* ====================== GESTIÓN DE EMPRESAS ====================== */
+
+        // Crear una nueva empresa
+        Route::post('/companies', [CompanyController::class, 'store']);
+
+        // Listar todas las empresas
+        Route::get('/companies', [CompanyController::class, 'index']);
+
     });
-    
+
+/*
+|--------------------------------------------------------------------------
+| RUTAS DE GESTIÓN DE USUARIOS POR EMPRESA
+|--------------------------------------------------------------------------
+|
+| Estas rutas están protegidas por:
+|   • auth:sanctum        → usuario debe estar autenticado
+|   • company.active      → la empresa del usuario debe estar activa
+|
+| Prefijo: /company
+|
+*/
+
+Route::middleware(['auth:sanctum', 'company.active'])
+    ->prefix('company')
+    ->group(function () {
+
+        Route::post('/users', [CompanyUserController::class, 'store'])
+            ->middleware([
+                'owner.only',
+                'plan.business',
+                'check.user.limit'
+            ]);
+
+        Route::get('/users', [CompanyUserController::class, 'index']);
+    });
+
 /*
 |--------------------------------------------------------------------------
 | RUTAS DE PRUEBA / DESARROLLO
@@ -324,3 +363,6 @@ Route::get('/enviar', function () {
 
     return 'Correo enviado correctamente';
 });
+
+Route::post('/company/users', [CompanyUserController::class, 'store'])
+    ->middleware(['auth:sanctum', 'check.user.limit']);

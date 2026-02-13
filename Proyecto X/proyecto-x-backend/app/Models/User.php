@@ -3,43 +3,67 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    /**
-     * Los atributos que pueden ser asignados en masa
-     * (coinciden con las columnas de la tabla users)
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
         'role',
-        'email_verified_at',
-        'verification_code',
-        'password_reset_code',
-        'password_reset_expires_at',
+        'company_id'
     ];
 
-    /**
-     * Los atributos que deben ocultarse al serializar
-     */
     protected $hidden = [
         'password',
         'remember_token',
+        'password_reset_code',
+        'password_reset_expires_at'
     ];
 
-    /**
-     * Casts según el schema
-     */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password_reset_expires_at' => 'datetime',
-
+        'email_verified_at' => 'datetime'
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relaciones
+    |--------------------------------------------------------------------------
+    */
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Roles
+    |--------------------------------------------------------------------------
+    */
+
+    public function isOwner(): bool
+    {
+        return $this->role === 'owner';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
 }
