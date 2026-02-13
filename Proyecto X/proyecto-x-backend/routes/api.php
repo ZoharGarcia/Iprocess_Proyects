@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Http\Controllers\ContactoController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerifyEmailMail;
+use App\Http\Controllers\Admin\UserManagementController; 
 use Illuminate\Support\Facades\Hash;
 use App\Mail\ContactoMailable;
 use App\Mail\PruebaCorreo;
@@ -291,4 +292,15 @@ Route::get('/enviar', function () {
     );
 
     return 'Correo enviado correctamente';
+});
+
+Route::middleware(['auth:sanctum', 'super.admin'])
+    ->prefix('admin')
+    ->group(function () {
+
+        Route::get('/users', [UserManagementController::class, 'index']);
+        Route::get('/users/{id}', [UserManagementController::class, 'show']);
+        Route::put('/users/{id}', [UserManagementController::class, 'update']);
+        Route::delete('/users/{id}', [UserManagementController::class, 'destroy']);
+
 });

@@ -18,6 +18,7 @@ public function up(): void
 }
 
 
+
     /**
      * Reverse the migrations.
      */
