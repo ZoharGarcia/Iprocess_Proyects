@@ -2,6 +2,7 @@ import { Hero } from "../components/Hero";
 import { Features } from "../components/Features";
 import { Pricing } from "../components/Pricing";
 import { Button } from "../components/ui/button";
+import "../../assets/Logo_Iprocess.png";
 
 export function Home() {
   return (

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import "../../styles/password.css";
+import "../../assets/Logo_Iprocess.png";
 
 function getApiBaseUrl(): string {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;

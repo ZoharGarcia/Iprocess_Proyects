@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import "../../styles/register.css";
+import "../../assets/Logo_Iprocess.png";
 
 type FormState = {
   name: string;
