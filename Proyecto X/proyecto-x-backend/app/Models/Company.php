@@ -49,6 +49,11 @@ class Company extends Model
         return $this->plan === 'business';
     }
 
+    public function devices()
+{
+    return $this->hasMany(Device::class);
+}
+
     public function isIndividual(): bool
     {
         return $this->plan === 'individual';

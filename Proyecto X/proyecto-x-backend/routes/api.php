@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Http\Controllers\ContactoController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerifyEmailMail;
-use App\Http\Controllers\Admin\UserManagementController; 
+use App\Http\Controllers\Admin\UserManagementController;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\ContactoMailable;
 use App\Mail\PruebaCorreo;
@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Company\CompanyUserController;
+use App\Http\Controllers\Company\DeviceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -270,13 +271,6 @@ Route::middleware('auth:sanctum')->delete('/account', function (Request $request
 |--------------------------------------------------------------------------
 | RUTAS DE ADMINISTRACIÓN (Solo Super Admin)
 |--------------------------------------------------------------------------
-|
-| Estas rutas están protegidas por:
-|   • auth:sanctum     → usuario debe estar autenticado con Sanctum
-|   • super.admin      → solo usuarios con rol de super administrador
-|
-| Prefijo: /admin
-|
 */
 
 Route::middleware(['auth:sanctum', 'super.admin'])
@@ -285,39 +279,21 @@ Route::middleware(['auth:sanctum', 'super.admin'])
 
         /* ====================== GESTIÓN DE USUARIOS ====================== */
 
-        // Listar todos los usuarios
         Route::get('/users', [UserManagementController::class, 'index']);
-
-        // Mostrar un usuario específico
         Route::get('/users/{id}', [UserManagementController::class, 'show']);
-
-        // Actualizar datos de un usuario
         Route::put('/users/{id}', [UserManagementController::class, 'update']);
-
-        // Eliminar un usuario
         Route::delete('/users/{id}', [UserManagementController::class, 'destroy']);
 
         /* ====================== GESTIÓN DE EMPRESAS ====================== */
 
-        // Crear una nueva empresa
         Route::post('/companies', [CompanyController::class, 'store']);
-
-        // Listar todas las empresas
         Route::get('/companies', [CompanyController::class, 'index']);
-
     });
 
 /*
 |--------------------------------------------------------------------------
 | RUTAS DE GESTIÓN DE USUARIOS POR EMPRESA
 |--------------------------------------------------------------------------
-|
-| Estas rutas están protegidas por:
-|   • auth:sanctum        → usuario debe estar autenticado
-|   • company.active      → la empresa del usuario debe estar activa
-|
-| Prefijo: /company
-|
 */
 
 Route::middleware(['auth:sanctum', 'company.active'])
@@ -333,6 +309,19 @@ Route::middleware(['auth:sanctum', 'company.active'])
 
         Route::get('/users', [CompanyUserController::class, 'index']);
     });
+
+/*
+|--------------------------------------------------------------------------
+| RUTAS DE DISPOSITIVOS (requieren compañía asociada)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth:sanctum', 'has.company'])->group(function () {
+
+    Route::get('/devices', [DeviceController::class, 'index']);
+    Route::post('/devices', [DeviceController::class, 'store']);
+
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -363,6 +352,3 @@ Route::get('/enviar', function () {
 
     return 'Correo enviado correctamente';
 });
-
-Route::post('/company/users', [CompanyUserController::class, 'store'])
-    ->middleware(['auth:sanctum', 'check.user.limit']);

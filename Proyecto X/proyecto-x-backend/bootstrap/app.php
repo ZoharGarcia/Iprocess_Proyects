@@ -24,6 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'check.user.limit' => CheckUserLimit::class,
         ]);
+
+        $middleware->alias([
+            'has.company' => \App\Http\Middleware\EnsureUserHasCompany::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -1,9 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import "../../styles/register.css";
 import "../../assets/Logo_Iprocess.png";
 
 type FormState = {
+  company_name: string;
+  plan_id: string;
   name: string;
   email: string;
   password: string;
@@ -11,6 +13,12 @@ type FormState = {
 };
 
 type Touched = Record<keyof FormState, boolean>;
+
+type Plan = {
+  id: number;
+  name: string;
+  // Puedes agregar más campos si los devuelves (description, price, etc.)
+};
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,6 +31,8 @@ export function Register() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState<FormState>({
+    company_name: "",
+    plan_id: "",
     name: "",
     email: "",
     password: "",
@@ -30,18 +40,45 @@ export function Register() {
   });
 
   const [touched, setTouched] = useState<Touched>({
+    company_name: false,
+    plan_id: false,
     name: false,
     email: false,
     password: false,
     passwordConfirm: false,
   });
 
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(false);
   const [uiError, setUiError] = useState<string | null>(null);
+
+  // Cargar planes al montar el componente
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const res = await fetch(`${getApiBaseUrl()}/plans`);
+        if (res.ok) {
+          const data = await res.json();
+          setPlans(Array.isArray(data) ? data : data.data ?? []);
+        }
+      } catch (err) {
+        console.error("Error al cargar planes", err);
+      }
+    };
+    fetchPlans();
+  }, []);
 
   const errors = useMemo(() => {
     const e: Partial<Record<keyof FormState, string>> = {};
 
+    // Empresa
+    if (!form.company_name.trim()) e.company_name = "Ingresa el nombre de la empresa";
+    else if (form.company_name.trim().length < 2) e.company_name = "Mínimo 2 caracteres";
+
+    // Plan
+    if (!form.plan_id) e.plan_id = "Selecciona un plan";
+
+    // Usuario
     if (!form.name.trim()) e.name = "Ingresa tu nombre";
     else if (form.name.trim().length < 2) e.name = "Mínimo 2 caracteres";
 
@@ -76,6 +113,8 @@ export function Register() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          company_name: form.company_name.trim(),
+          plan_id: parseInt(form.plan_id, 10),
           name: form.name.trim(),
           email: form.email.trim(),
           password: form.password,
@@ -85,16 +124,18 @@ export function Register() {
 
       const data = await res.json().catch(() => ({}));
 
-      if (!res.ok) {
-        const msg =
-          data.message ||
-          data.errors?.email?.[0] ||
-          data.errors?.password?.[0] ||
-          "No se pudo registrar";
-        setUiError(msg);
-        return;
-      }
+    if (!res.ok) {
+      const dataTyped = data as { message?: string; errors?: Record<string, string[]> };
 
+      const msg =
+        dataTyped.message ||
+        (dataTyped.errors && Object.values(dataTyped.errors)[0]?.[0]) ||
+        "No se pudo registrar";
+
+      setUiError(msg);
+      return;
+    }
+      // Registro exitoso → redirigir a login
       navigate("/login", { replace: true });
     } catch {
       setUiError("Error de conexión");
@@ -115,7 +156,7 @@ export function Register() {
 
           <div className="auth-brand__divider" />
           <h2 className="auth-brand__title">Proyecto X</h2>
-          <p className="auth-brand__subtitle">Crea tu cuenta para continuar</p>
+          <p className="auth-brand__subtitle">Crea tu cuenta empresarial para continuar</p>
         </aside>
 
         <main className="auth-panel">
@@ -131,8 +172,47 @@ export function Register() {
               </div>
             )}
 
+            {/* Nombre de la empresa */}
+            <label className="auth-label" htmlFor="company_name">
+              Nombre de la empresa
+              <input
+                id="company_name"
+                className="auth-input"
+                value={form.company_name}
+                onChange={(e) => setField("company_name", e.target.value)}
+                onBlur={() => setTouched((p) => ({ ...p, company_name: true }))}
+                placeholder="Nombre de tu empresa"
+              />
+              {touched.company_name && errors.company_name && (
+                <div className="auth-field-error">{errors.company_name}</div>
+              )}
+            </label>
+
+            {/* Selección de plan */}
+            <label className="auth-label" htmlFor="plan">
+              Plan
+              <select
+                id="plan"
+                className="auth-input"
+                value={form.plan_id}
+                onChange={(e) => setField("plan_id", e.target.value)}
+                onBlur={() => setTouched((p) => ({ ...p, plan_id: true }))}
+              >
+                <option value="">Selecciona un plan</option>
+                {plans.map((plan) => (
+                  <option key={plan.id} value={plan.id}>
+                    {plan.name}
+                  </option>
+                ))}
+              </select>
+              {touched.plan_id && errors.plan_id && (
+                <div className="auth-field-error">{errors.plan_id}</div>
+              )}
+            </label>
+
+            {/* Nombre del propietario */}
             <label className="auth-label" htmlFor="name">
-              Nombre
+              Nombre del responsable
               <input
                 id="name"
                 className="auth-input"
@@ -147,6 +227,7 @@ export function Register() {
               )}
             </label>
 
+            {/* Correo, contraseña y confirmación (sin cambios) */}
             <label className="auth-label" htmlFor="email">
               Correo
               <input
@@ -199,7 +280,7 @@ export function Register() {
             </label>
 
             <button className="auth-button" type="submit" disabled={!canSubmit}>
-              {loading ? "Creando..." : "Crear cuenta"}
+              {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
 
             <div className="auth-register">
