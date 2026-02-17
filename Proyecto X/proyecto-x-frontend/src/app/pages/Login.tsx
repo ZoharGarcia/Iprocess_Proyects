@@ -133,7 +133,7 @@ export function Login() {
 
       // Redirección según estado de la cuenta
       if (user.company_id) {
-        navigate("/dashboard", { replace: true });
+        navigate("/inicio", { replace: true });
       } else {
         navigate("/select-plan", { replace: true });
       }
@@ -151,7 +151,7 @@ export function Login() {
         <aside className="auth-brand">
           <div className="auth-brand__logoWrap">
             <div style={{ fontWeight: 800, fontSize: 18, letterSpacing: "0.06em" }}>
-              IPROCESS
+              IPROCESSs
             </div>
           </div>
 
