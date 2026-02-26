@@ -169,6 +169,11 @@ Puede modificarse y adaptarse según necesidades del proyecto.
 
 ---
 
+
+
 ## 👨‍💻 Autor
+
+**Bismar Acevedo**  
+GitHub: [@bismaracevedo003-del Bismar-Ac](https://github.com/bismaracevedo003-del)
 
 Desarrollado como parte de un flujo interno de automatización para carga masiva en Shopify.
