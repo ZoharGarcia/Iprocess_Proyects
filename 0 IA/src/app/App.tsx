@@ -1,7 +1,7 @@
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
-import { useEffect, Suspense, lazy } from 'react';
-import ReactGA from 'react-ga';
+import { useEffect, Suspense, lazy } from "react";
+import ReactGA from "react-ga";
 
 const Inicio = lazy(() => import("@/pages/Home"));
 const Servicios = lazy(() => import("@/pages/servicios"));
@@ -9,33 +9,36 @@ const Storytelling = lazy(() => import("@/pages/StorytellingP"));
 const Industria = lazy(() => import("@/pages/Industria"));
 const Partner = lazy(() => import("@/pages/Partner"));
 const Contacto = lazy(() => import("@/pages/Contacto"));
-//const NotFound = lazy(() => import("@/pages/NotFound")); // Assuming you have or will create this
 
 function EshopRedirect() {
-  return <Navigate to="https://e-shop.iprocess-ind.com/password" replace />;
+  useEffect(() => {
+    window.location.replace("https://e-shop.iprocess-ind.com");
+  }, []);
+  return null;
 }
 
 export default function App() {
   const location = useLocation();
+  const trackingId = import.meta.env.VITE_GA_TRACKING_ID as string | undefined;
 
   useEffect(() => {
-    const trackingId = import.meta.env.VITE_GA_TRACKING_ID;
-    if (trackingId) {
-      ReactGA.initialize(trackingId);
-    } else {
-      console.warn('Google Analytics tracking ID not found in environment variables.');
+    if (!trackingId) {
+      console.warn(
+        "Google Analytics tracking ID not found in environment variables."
+      );
+      return;
     }
-  }, []); 
+    ReactGA.initialize(trackingId);
+  }, [trackingId]);
 
   useEffect(() => {
+    if (!trackingId) return;
     ReactGA.pageview(location.pathname + location.search);
-  }, [location]); 
-  
- // <Route path="*" element={<NotFound />} /> {/* 404 handler */}
- //<Suspense fallback={<div>Cargando página...</div>}>
- //</Suspense>
+  }, [location.pathname, location.search, trackingId]);
+
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/servicios" element={<Servicios />} />
@@ -45,6 +48,7 @@ export default function App() {
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/e-shop" element={<EshopRedirect />} />
         </Routes>
+      </Suspense>
     </ThemeProvider>
   );
 }
