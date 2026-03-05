@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class Device extends Model
 {
@@ -19,17 +20,23 @@ class Device extends Model
         'area',
         'status',
         'last_seen_at',
+        'device_token'
     ];
 
     protected $casts = [
         'last_seen_at' => 'datetime',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relaciones
-    |--------------------------------------------------------------------------
-    */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($device) {
+            if (!$device->device_token) {
+                $device->device_token = Str::uuid();
+            }
+        });
+    }
 
     public function company()
     {

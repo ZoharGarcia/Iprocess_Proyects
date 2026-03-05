@@ -21,7 +21,31 @@ use App\Http\Controllers\Company\DeviceController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\Plan;
 use App\Http\Controllers\SystemStatusController;
+use App\Http\Controllers\Ingest\TelemetryIngestController;
+use App\Http\Controllers\TelemetryQueryController;
 
+/*
+|--------------------------------------------------------------------------
+| INGEST (Dispositivos)
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/ingest/telemetry', [TelemetryIngestController::class, 'store'])
+    ->middleware(['device.key']);
+
+/*
+|--------------------------------------------------------------------------
+| QUERY (Usuarios)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/telemetry/latest', [TelemetryQueryController::class, 'latest']);
+
+    Route::get('/telemetry/readings', [TelemetryQueryController::class, 'readings']);
+
+});
 /*
 |--------------------------------------------------------------------------
 | RUTAS DE AUTENTICACIÓN (PÚBLICAS)

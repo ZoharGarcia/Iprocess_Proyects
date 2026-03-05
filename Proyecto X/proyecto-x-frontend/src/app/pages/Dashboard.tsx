@@ -1,6 +1,12 @@
 // src/pages/Dashboard.tsx
-import { useMemo, useState } from "react";
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/button";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE_URL = API_BASE.replace(/\/$/, "");
+
 
 type Severity = "critical" | "high" | "medium" | "low";
 type AlarmState = "active" | "acked" | "cleared";
@@ -24,6 +30,48 @@ type Device = {
   status: DeviceStatus;
   last_seen: string; // ISO
 };
+
+// === FUNCIONES PARA LLAMAR A TU API (usando VITE_API_BASE_URL) ===
+async function fetchLatest(deviceId: string) {
+  const res = await fetch(`${API_BASE_URL}/telemetry/latest?device_id=${deviceId}`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Error cargando latest");
+
+  return res.json();
+}
+
+async function fetchReadings(deviceId: string, range: string) {
+  const res = await fetch(`${API_BASE_URL}/telemetry/readings?device_id=${deviceId}&range=${range}`, {
+      credentials: "include",
+    }
+  );
+
+  if (!res.ok) throw new Error("Error cargando readings");
+
+  return res.json();
+}
+
+async function fetchAlarms(range: string) {
+  const res = await fetch(`${API_BASE_URL}/telemetry/alarms?range=${range}`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Error cargando alarms");
+
+  return res.json();
+}
+
+async function fetchDevices() {
+  const res = await fetch(`${API_BASE_URL}/telemetry/devices`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Error cargando devices");
+
+  return res.json();
+}
 
 function formatDateTime(iso: string): string {
   const d = new Date(iso);
@@ -116,67 +164,40 @@ export default function Dashboard() {
   const [areaFilter, setAreaFilter] = useState<string>("Todos");
   const [search, setSearch] = useState("");
 
-  // Datos mock (reemplazar por API)
-  const alarms: Alarm[] = [
-    {
-      id: "ALM-1001",
-      severity: "critical",
-      state: "active",
-      tag: "P-101.PRESS",
-      message: "Presión alta fuera de rango",
-      area: "Proceso",
-      ts: new Date(Date.now() - 5 * 60_000).toISOString(),
-    },
-    {
-      id: "ALM-1002",
-      severity: "high",
-      state: "acked",
-      tag: "T-204.TEMP",
-      message: "Temperatura elevada (reconocida)",
-      area: "Horno",
-      ts: new Date(Date.now() - 18 * 60_000).toISOString(),
-    },
-    {
-      id: "ALM-1003",
-      severity: "medium",
-      state: "cleared",
-      tag: "IO-M1.PORT3",
-      message: "Desconexión momentánea de sensor",
-      area: "Línea 1",
-      ts: new Date(Date.now() - 55 * 60_000).toISOString(),
-    },
-  ];
+  // === ESTADOS PARA DATOS REALES DEL BACKEND ===
+  const deviceId = "4"; // luego puedes hacerlo dinámico
+  const [latestData, setLatestData] = useState<any[]>([]);
+  const [readings, setReadings] = useState<any[]>([]);
+  const [alarms, setAlarms] = useState<Alarm[]>([]);
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const devices: Device[] = [
-    {
-      id: "DEV-01",
-      name: "IO-Link Master M1",
-      area: "Línea 1",
-      status: "ok",
-      last_seen: new Date(Date.now() - 20_000).toISOString(),
-    },
-    {
-      id: "DEV-02",
-      name: "IO-Link Master M2",
-      area: "Línea 2",
-      status: "warning",
-      last_seen: new Date(Date.now() - 90_000).toISOString(),
-    },
-    {
-      id: "DEV-03",
-      name: "PLC-01",
-      area: "Proceso",
-      status: "ok",
-      last_seen: new Date(Date.now() - 12_000).toISOString(),
-    },
-    {
-      id: "DEV-04",
-      name: "Gateway SCADA",
-      area: "Red",
-      status: "offline",
-      last_seen: new Date(Date.now() - 35 * 60_000).toISOString(),
-    },
-  ];
+  // === CARGAR TODOS LOS DATOS DESDE LA API AL CARGAR LA PÁGINA ===
+  useEffect(() => {
+    async function load() {
+      try {
+        setLoading(true);
+
+        const [latest, history, alarmsData, devicesData] = await Promise.all([
+          fetchLatest(deviceId),
+          fetchReadings(deviceId, timeRange),
+          fetchAlarms(timeRange),
+          fetchDevices(),
+        ]);
+
+        setLatestData(latest);
+        setReadings(history);
+        setAlarms(alarmsData);
+        setDevices(devicesData);
+      } catch (err) {
+        console.error("Error cargando datos del dashboard:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, [timeRange]);
 
   const areas = useMemo(() => {
     const all = new Set<string>();
@@ -217,6 +238,33 @@ export default function Dashboard() {
     };
   }, [alarms, devices]);
 
+  // === CONVERTIR LECTURAS A FORMATO UTILIZABLE ===
+  const sensors = useMemo(() => {
+    const map: Record<string, number> = {};
+    latestData.forEach((r: any) => {
+      map[r.sensor] = r.value;
+    });
+    return map;
+  }, [latestData]);
+
+  // === DATOS PARA EL GRÁFICO (Recharts) ===
+  const chartData = useMemo(() => {
+    return readings.map((r: any) => ({
+      time: new Date(r.time).toLocaleTimeString(),
+      value: r.value,
+      sensor: r.sensor,
+    }));
+  }, [readings]);
+
+  // Mostrar loading mientras se cargan los datos
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-lg text-slate-500">Cargando datos del dashboard...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
@@ -253,7 +301,30 @@ export default function Dashboard() {
               ))}
             </select>
 
-            <Button variant="outline" onClick={() => { /* hook para refresh */ }}>
+            {/* BOTÓN ACTUALIZAR */}
+            <Button
+              variant="outline"
+              onClick={async () => {
+                try {
+                  setLoading(true);
+                  const [latest, history, alarmsData, devicesData] = await Promise.all([
+                    fetchLatest(deviceId),
+                    fetchReadings(deviceId, timeRange),
+                    fetchAlarms(timeRange),
+                    fetchDevices(),
+                  ]);
+
+                  setLatestData(latest);
+                  setReadings(history);
+                  setAlarms(alarmsData);
+                  setDevices(devicesData);
+                } catch (err) {
+                  console.error(err);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+            >
               Actualizar
             </Button>
           </div>
@@ -335,12 +406,20 @@ export default function Dashboard() {
                     filteredAlarms.map((a) => (
                       <tr key={a.id} className="border-t">
                         <td className="px-5 py-3">
-                          <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${severityPillClass(a.severity)}`}>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${severityPillClass(
+                              a.severity
+                            )}`}
+                          >
                             {severityLabel(a.severity)}
                           </span>
                         </td>
                         <td className="px-5 py-3">
-                          <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${statePillClass(a.state)}`}>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${statePillClass(
+                              a.state
+                            )}`}
+                          >
                             {stateLabel(a.state)}
                           </span>
                         </td>
@@ -424,7 +503,8 @@ export default function Dashboard() {
             <div className="rounded-2xl border bg-slate-50 p-6 text-sm text-muted-foreground">
               Aquí va el gráfico de tendencias (Recharts) y/o tarjetas analíticas.
               <div className="mt-2 text-xs">
-                Siguiente paso: definir variables, agregaciones (min/avg/max), y endpoint de series temporales.
+                <strong>Datos ya disponibles desde la API:</strong>{" "}
+                <code>chartData</code> (para Recharts) y <code>sensors</code> (valores actuales).
               </div>
             </div>
           </div>

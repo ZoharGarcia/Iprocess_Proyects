@@ -1,8 +1,0 @@
-Correr local:
-
-uvicorn main:app --reload --port 8001
-
-Probar:
-
-curl -X POST "http://127.0.0.1:8001/sync-prices?dry_run=true" \
-  -H "X-Internal-Key: una_clave_larga"

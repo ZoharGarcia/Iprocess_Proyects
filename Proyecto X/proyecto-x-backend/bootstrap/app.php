@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.user.limit'    => CheckUserLimit::class,
             'has.company'         => EnsureUserHasCompany::class,
             'sub.active'          => EnsureCompanySubscriptionIsActive::class,
+            'device.key' => \App\Http\Middleware\DeviceKeyMiddleware::class,
         ]);
 
     })

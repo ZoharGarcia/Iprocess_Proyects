@@ -1,0 +1,38 @@
+Cómo lo prueba el IO-Link Master/Gateway
+
+Request ejemplo:
+
+POST /api/ingest/telemetry
+Header:
+
+Authorization: DeviceKey <prefix>.<plain>
+Content-Type: application/json
+
+Body:
+
+{
+  "samples": [
+    { "sensor": "port1.temperature", "value": 28.7, "unit": "C" },
+    { "sensor": "port1.humidity", "value": 55, "unit": "%", "quality": 0 }
+  ]
+}
+
+Usar token para enviar datos
+
+Ejemplo desde Postman o PLC gateway:
+
+POST /ingest/telemetry
+
+Header:
+
+X-Device-Key: prefix.token
+
+Body:
+
+{
+  "temperature": 28.4,
+  "pressure": 5.2
+}
+
+Token de 123
+8QE8srQ8Fh6f.8QE8srQ8Fh6f2dgTfGivM92fMfARskiek5bkMGNY7YGuyjRf
